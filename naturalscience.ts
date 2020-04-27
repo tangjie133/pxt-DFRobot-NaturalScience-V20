@@ -79,14 +79,21 @@ namespace NaturalScience {
     }
     //%weight=94
     //%block="get TDS K value"
-    export function GTDSK():string{
+    export function GetTDSK():string{
         return deta[22] + '.' + deta[23];
     }
     //%weight=96
     //%block="set TDS K|%value"
-    export function WTDSK(_valud:number):void{
-        let position=_valud.toString().indexOf(".");
-
+    export function SetTDSK(_value:number):void{
+        let position:number=_value.toString().indexOf(".");
+        let __valud = _value*100;
+        let buffer:Buffer = pins.createBuffer(4);
+        buffer[0]=0x1E;
+        buffer[1]=parseInt(__valud.toString().substr(0, position));
+        buffer[2]=0x1F;
+        buffer[3]=parseInt(__valud.toString().substr(position, position+1));
+        pins.i2cWriteBuffer(0x10, buffer);
+        serial.writeNumber(parseInt(__valud.toString().substr(position, position+1)));
     }
     //CO2
     //%weight=93
@@ -98,6 +105,25 @@ namespace NaturalScience {
             return (deta[20]<<8)|deta[21];
         }
         return 0;
+    }
+    //基线值
+    //%weight=92
+    //%block="get baseline value"
+    export function GetBaseline():string{
+        return deta[24] + '.' + deta[25];
+    }
+    //设置基线值
+    //%weight=91
+    //block="set baseline|%_value value"
+    export function SetBaseline(_value:number):void{
+        let position:number=_value.toString().indexOf(".");
+        let __valud = _value*100;
+        let buffer:Buffer = pins.createBuffer(4);
+        buffer[0]=0x1E;
+        buffer[1]=parseInt(__valud.toString().substr(0, position));
+        buffer[2]=0x1F;
+        buffer[3]=parseInt(__valud.toString().substr(position, position+1));
+        pins.i2cWriteBuffer(0x10, buffer);
     }
 
     //OLED
