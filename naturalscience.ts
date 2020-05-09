@@ -1,6 +1,6 @@
 
 enum BME{
-    //%block="temp"
+    //%block="temperature"
     TEMP = 1,
     //%block="humidity"
     HUM = 2,
@@ -17,13 +17,12 @@ enum CT{
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
 namespace NaturalScience {
     let deta:number[]=[];
-    let OLEDdeta:number[]=[0x28];
     //请求数据
     //%weight=100
     //%block="requst deta"
     export function RequstDeta():void{
         pins.i2cWriteNumber(0x10, 8, NumberFormat.Int8LE);
-        let _deta= pins.i2cReadBuffer(0x10, 26)
+        let _deta= pins.i2cReadBuffer(0x10, 22)
         for(let i=0; i<26; i++){
             deta[i]=_deta[i]
         }
@@ -31,7 +30,7 @@ namespace NaturalScience {
 
     //紫外线
     //%weight=100
-    //%block="get uvIntensity"
+    //%block="get ultraviolet"
     export function Ultraviolet():string{
         return  deta[0] + '.' + deta[1];
     }
@@ -62,7 +61,7 @@ namespace NaturalScience {
             if(deta[8]==1){
                 return deta[9] + '.' + deta[10];
             }else{
-                return '-' + deta[9] + '.' + deta[10];
+                return '-' + deta[9] + '.' + (255-deta[10]);
             }
         }else if(_status==2){
             return deta[11] + '.' + deta[12] + '%';
@@ -88,11 +87,11 @@ namespace NaturalScience {
     //%block="set TDS K|%value"
     export function SetTDSK(_value:number):void{
         let position:number=_value.toString().indexOf(".");
-        let __valud = _value*100;
+        let __value = _value*100;
         let buffer = pins.createBuffer(3);
         buffer[0]=0x1E;
-        buffer[1]=parseInt(__valud.toString().substr(0, position));
-        buffer[2]=parseInt(__valud.toString().substr(position, position+1));
+        buffer[1]=parseInt(__value.toString().substr(0, position));
+        buffer[2]=parseInt(__value.toString().substr(position, position+1));
         pins.i2cWriteBuffer(0x10, buffer);
     }
     //CO2
@@ -106,57 +105,58 @@ namespace NaturalScience {
         }
         return 0;
     }
-    //基线值
-    //%weight=92
-    //%block="get baseline value"
-    export function GetBaseline():number{
-        return deta[25];
-    }
+    // //基线值
+    // //%weight=92
+    // //%block="get baseline value"
+    // export function GetBaseline():number{
+    //     return (deta[24]<<8)|deta[25];
+    // }
     //设置基线值
     //%weight=91
     //%block="set baseline|%_value value"
     export function SetBaseline(_value:number):void{
-        let position:number=_value.toString().indexOf(".");
-        let __valud = _value*100;
-        let buffer:Buffer = pins.createBuffer(4);
+        //parseInt(_value.toString(),16)
+        let buffer:Buffer = pins.createBuffer(3);
         buffer[0]=0x20;
-        buffer[1]=parseInt(__valud.toString().substr(0, position));
-        buffer[2]=parseInt(__valud.toString().substr(position, position+1));
+        buffer[1]=_value>>8&0xff
+        buffer[2]=_value&0xff
         pins.i2cWriteBuffer(0x10, buffer);
     }
 
-    //OLED
     /**
      * OLED 12864 shows the string
      * @param _row (16 pixels per line), eg: 1
      * @param _column  , eg: 1
+     * @param leng  , eg: 16
      */
     //%weight=90
     //% _value.defl="DFRobot"
     //% _row.min=1 _row.max=8
     //% _column.min=1 _column.max=16
-    //%block="set OLED row|%_row column|%_column display|%_value"
-    export function OLEDString(_row:number, _column:number, _value:string):void{
+
+    //%block="set OLED row|%_row column|%_column leng|%leng display|%_value"
+    export function OLEDString(_row:number, _column:number,_leng:number, _value:string):void{
         let buffer:Buffer
-        if((17-_column)>=_value.length){
-            buffer = pins.createBuffer( _value.length+3)
+            buffer = pins.createBuffer(_leng+3)
             buffer[0]=0x28
             buffer[1]=_row;
             buffer[2]=_column;
-            for (let i = 0;i < _value.length; i++){
+            for (let i = 0;i < _leng; i++){
                 buffer[i+3]=_value.charCodeAt(i);
-            }
-        }else{
-            buffer = pins.createBuffer(19)
-            buffer[0]=0x28
-            buffer[1]=_row;
-            buffer[2]=_column;
-            for (let i = 0; i < 16; i++){
-                buffer[i+3]=_value.charCodeAt(i);
-            }
-        }
+      
         pins.i2cWriteBuffer(0x10, buffer);
+        if(_value.length+_column<16){
+            ClearOLED(_row, _value.length+_column , _leng+_column);}
+        else{
+             ClearOLED(_row, 16 , 16);
+        }
+        basic.pause(50);
     }
+    }
+
+
+
+    
     /**
      * Clear display
      * @param _valuerow (16 pixels per line), eg: 1
@@ -169,7 +169,9 @@ namespace NaturalScience {
     //% _valuecolumnstop.min=1 _valuecolumnstop.max=16
     //%block="clear OLED row|%_valuerow startrow|%_valuecolumnstart stoprow|%_valuecolumnstop "
     export function ClearOLED(_valuerow:number, _valuecolumnstart:number, _valuecolumnstop:number):void{
-        let datalength:number = _valuecolumnstop - _valuecolumnstart + 1 
+        let datalength:number = _valuecolumnstop - _valuecolumnstart
+        if (datalength < 0)
+            return;  
         let buffer:Buffer = pins.createBuffer(datalength+3);
         buffer[0]=0x28
         buffer[1]=_valuerow;
@@ -178,6 +180,7 @@ namespace NaturalScience {
              buffer[i+3]=32;
          }
         pins.i2cWriteBuffer(0x10, buffer);
+         basic.pause(50);
     }
     /**
      * Clear display
@@ -374,7 +377,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param PASSWORD to PASSWORD ,eg: "yourPASSWORD"
     */
 
-    //% weight=100
+    //% weight=87
     //% blockId=microIoT_WIFI block="Micro:IoT setup |Wi-Fi: |name: %SSID| password：%PASSWORD"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
         microIoT_setPara(SETWIFI_NAME, SSID)
@@ -394,7 +397,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param IP to IP ,eg: "192.168."
     */
 
-    //% weight=100
+    //% weight=86
     //% blockExternalInputs=1
     //% blockId=microIoT_MQTT block="Micro:IoT setup mqtt|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP:%IP server:%SERVERS"
     export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
@@ -426,7 +429,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * Add an MQTT subscription
      */
 
-    //% weight=200
+    //% weight=85
     //% blockId=microIoT_add_topic
     //% block="subscribe additional %top |: %IOT_TOPIC"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
@@ -442,7 +445,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param Mess to Mess ,eg: "mess"
      */
 
-    //% weight=99
+    //% weight=84
     //% blockId=microIoT_SendMessage block="MQTT Send Message %string| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
@@ -495,7 +498,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     /**
      * MQTT processes the subscription when receiving message
      */
-    //% weight=98
+    //% weight=83
     //% blockGap=60
     //% blockId=obloq_mqtt_callback_user_more block="MQTT on %top |received"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
@@ -513,7 +516,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param EVENT to EVENT ,eg: "yourEvent"
     * @param KEY to KEY ,eg: "yourKey"
     */
-    //% weight=80
+    //% weight=82
     //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
     //% send.fieldEditor="gridpicker" send.fieldOptions.columns=3
     //% blockId=microIoT_http_IFTTT
@@ -549,9 +552,10 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     /**
     * ThingSpeak configured and sent data
     * @param KEY to KEY ,eg: "your write api key"
+    * @param time set timeout, eg: 10000
     */
 
-    //% weight=99
+    //% weight=81
     //% blockId=microIoT_http_TK_GET
     //% block="ThingSpeak(Get) | key %KEY|value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
@@ -567,7 +571,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param time set timeout, eg: 10000
     */
 
-    //% weight=78
+    //% weight=80
     //% blockId=microIoT_http_post
     //% block="IFTTT(post) | value1 %value1| value2 %value2| value3 %value3| timeout(ms) %time"
     export function microIoT_http_post(value1: string, value2: string, value3: string, time: number): void {
@@ -576,16 +580,6 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
         tempStr = "trigger/" + microIoT_WEBHOOKS_EVENT + "/with/key/" + microIoT_WEBHOOKS_KEY + ",{\"value1\":\"" + value1 + "\",\"value2\":\"" + value2 + "\",\"value3\":\"" + value3 + "\" }" + "\r"
         microIoT_ParaRunCommand(POST_URL, tempStr)
     }
-
-  
-
-   
-
-  
-
- 
-
-  
 
     function microIoT_GetData(len: number): void {
         RECDATA = ""
