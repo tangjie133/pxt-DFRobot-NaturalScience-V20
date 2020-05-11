@@ -20,14 +20,6 @@ enum DIR {
     //% block="CCW"
     CCW = 2
 }
-enum MOTORS {
-    //% block="M1"
-    M1 = 1,
-    //% block="M2"
-    M2 = 2,
-    //% block="ALL"
-    ALL = 3
-}
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
 namespace NaturalScience {
     let deta:number[]=[];
@@ -236,62 +228,26 @@ namespace NaturalScience {
      */
     //%weight=88
     //% _speed.min=0 _speed.max=255
-    //%blockId=NaturalScience_mototRun block="Motor control |%index direction|%_direction speed|%_speed"
-    export function mototRun(index: MOTORS, _direction: DIR, _speed: number): void {
-        if (index == 1) {
+    //%blockId=NaturalScience_mototRun block="Motor control direction|%_direction speed|%_speed"
+    export function mototRun(_direction: DIR, _speed: number): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
             buf[1] = _direction;
             buf[2] = _speed;
             pins.i2cWriteBuffer(0x10, buf)
 
-        } if (index == 2) {
-            let buf = pins.createBuffer(3)
-            buf[0] = 0x02;
-            buf[1] = _direction;
-            buf[2] = _speed;
-            pins.i2cWriteBuffer(0x10, buf)
-        }
-        if (index == 3) {
-            let buf = pins.createBuffer(5)
-            buf[0] = 0x00;
-            buf[1] = _direction;
-            buf[2] = _speed;
-            buf[3] = _direction;
-            buf[4] = _speed;
-            pins.i2cWriteBuffer(0x10, buf)
-        }
     }
     /**
      * 电机停止
      */
     //%weight=88
-    //%blockId=NaturalScience_mototStop block="Motor|%index stop"
-    export function mototStop(index: MOTORS): void {
-
-        if (index == 1) {
+    //%blockId=NaturalScience_mototStop block="Motorstop"
+    export function mototStop(): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
             buf[1] = 0;
             buf[2] = 0;
             pins.i2cWriteBuffer(0x10, buf)
-
-        } if (index == 2) {
-            let buf = pins.createBuffer(3)
-            buf[0] = 0x02;
-            buf[1] = 0;
-            buf[2] = 0;
-            pins.i2cWriteBuffer(0x10, buf)
-        }
-        if (index == 3) {
-            let buf = pins.createBuffer(5)
-            buf[0] = 0x00;
-            buf[1] = 0;
-            buf[2] = 0;
-            buf[3] = 0;
-            buf[4] = 0;
-            pins.i2cWriteBuffer(0x10, buf)
-        }
     }
 
 const OBLOQ_MQTT_EASY_IOT_SERVER_CHINA = "iot.dfrobot.com.cn"
