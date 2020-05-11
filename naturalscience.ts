@@ -574,7 +574,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
     //% weight=81
     //% blockId=microIoT_http_TK_GET
-    //% block="ThingSpeak(Get) | key %KEY||value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
+    //% block="ThingSpeak(Get) | key %KEY|value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
     //% inlineInputMode=inline
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
