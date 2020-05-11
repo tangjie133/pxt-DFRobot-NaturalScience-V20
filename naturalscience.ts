@@ -1,10 +1,10 @@
 
 enum BME{
-    //%block="temperature"
+    //%block="Temperature"
     TEMP = 1,
-    //%block="humidity"
+    //%block="Humidity"
     HUM = 2,
-    //%block="pressure"
+    //%block="Pressure"
     PRESSURE = 3
 }
 
@@ -33,7 +33,7 @@ namespace NaturalScience {
     let deta:number[]=[];
     //请求数据
     //%weight=100
-    //%blockId=NaturalScience_requstDeta block="requst deta"
+    //%blockId=NaturalScience_requstDeta block="Requst Deta"
     export function requstDeta():void{
         pins.i2cWriteNumber(0x10, 8, NumberFormat.Int8LE);
         let _deta= pins.i2cReadBuffer(0x10, 22)
@@ -45,32 +45,32 @@ namespace NaturalScience {
 
     //紫外线
     //%weight=100
-    //%blockId=NaturalScience_ultraviolet block="get ultraviolet"
+    //%blockId=NaturalScience_ultraviolet block="Get Ultraviolet"
     export function ultraviolet():string{
         return  deta[0] + '.' + deta[1];
     }
     //光线
     //%weight=99
-    //%blockId=NaturalScience_light block="get Light intensity value"、
+    //%blockId=NaturalScience_light block="Get Light intensity value"、
     export function light():number{
       return (deta[2]<<8)|deta[3];
     }
     //声音
     //%weight=98
-    //%blockId=NaturalScience_sound block="get Sound intensity"
+    //%blockId=NaturalScience_sound block="Get Sound intensity"
     export function sound():number{
         return (deta[4]<<8)|deta[5];
     }
     //18B20
     //%weight=97
-    //%blockId=NaturalScience_watertemp block="get watertemp"
+    //%blockId=NaturalScience_watertemp block="Get Watertemp"
     export function watertemp():string{
         return deta[6] + '.' + deta[7];
     }
 
     //BME
     //%weight=96
-    //%blockId=NaturalScience_BME block="get|%_status"
+    //%blockId=NaturalScience_BME block="Get|%_status"
     export function BME(_status:BME):string{
         if(_status==1){
             if(deta[8]==1){
@@ -87,7 +87,7 @@ namespace NaturalScience {
     }
     //TDS
     //%weight=95
-    //%blockId=NaturalScience_TDS block="get TDS"
+    //%blockId=NaturalScience_TDS block="Get TDS"
     export function TDS():number{
         return (deta[16]<<8)|deta[17]
     }
@@ -103,7 +103,7 @@ namespace NaturalScience {
      * @param _value  , eg: 1.1
      */
     //%weight=96
-    //%blockId=NaturalScience_SetTDSK block="set TDS K|%value"
+    //%blockId=NaturalScience_SetTDSK block="Set TDS K|%value"
     export function setTDSK(_value:number):void{
         let position:number=_value.toString().indexOf(".");
         let __value = _value*100;
@@ -115,7 +115,7 @@ namespace NaturalScience {
     }
     //CO2
     //%weight=93
-    //%blockId=NaturalScience_TVOC block="get|%_value value"
+    //%blockId=NaturalScience_TVOC block="Get|%_value value"
     export function TVOC(_value:CT):number{
         if(_value==1){
             return (deta[18]<<8)|deta[19];
@@ -132,7 +132,7 @@ namespace NaturalScience {
     // }
     //设置基线值
     //%weight=91
-    //%blockId=NaturalScience_setBaseline block="set baseline|%_value value"
+    //%blockId=NaturalScience_setBaseline block="Set baseline|%_value value"
     export function setBaseline(_value:number):void{
         //parseInt(_value.toString(),16)
         let buffer:Buffer = pins.createBuffer(3);
@@ -153,7 +153,7 @@ namespace NaturalScience {
     //% _row.min=1 _row.max=8
     //% _column.min=1 _column.max=16
     //% inlineInputMode=inline
-    //%blockId=NaturalScience_OLEDString block="set OLED row|%_row column|%_column leng|%leng display|%_value"
+    //%blockId=NaturalScience_OLEDString block="Set OLED row|%_row column|%_column leng|%leng display|%_value"
     export function OLEDString(_row:number, _column:number,_leng:number, _value:string):void{
         if(_value.length<17){
             let buffer:Buffer
@@ -198,7 +198,7 @@ namespace NaturalScience {
     //% _valuerow.min=1 _valuerow.max=8
     //% _valuecolumnstart.min=1 _valuecolumnstart.max=16
     //% _valuecolumnstop.min=1 _valuecolumnstop.max=16
-    //%blockId=NaturalScience_clearOLED block="clear OLED row|%_valuerow startrow|%_valuecolumnstart stoprow|%_valuecolumnstop "
+    //%blockId=NaturalScience_clearOLED block="Clear OLED row|%_valuerow startrow|%_valuecolumnstart stoprow|%_valuecolumnstop "
     export function clearOLED(_valuerow:number, _valuecolumnstart:number, _valuecolumnstop:number):void{
         let datalength:number = _valuecolumnstop - _valuecolumnstart
         if (datalength < 0)
@@ -219,7 +219,7 @@ namespace NaturalScience {
      */
     //%weight=88
     //% _valuerow.min=1 _valuerow.max=8
-    //%blockId=NaturalScience_clearOLEDRow block="clear OLED row|%_valuerow"
+    //%blockId=NaturalScience_clearOLEDRow block="Clear OLED row|%_valuerow"
     export function clearOLEDRow(_valuerow:number):void{
         let buffer:Buffer = pins.createBuffer(19);
         buffer[0]=0x28
@@ -236,7 +236,7 @@ namespace NaturalScience {
      */
     //%weight=88
     //% _speed.min=0 _speed.max=255
-    //%blockId=NaturalScience_mototRun block="motor control |%index direction|%_direction speed|%_speed"
+    //%blockId=NaturalScience_mototRun block="Motor control |%index direction|%_direction speed|%_speed"
     export function mototRun(index: MOTORS, _direction: DIR, _speed: number): void {
         if (index == 1) {
             let buf = pins.createBuffer(3)
