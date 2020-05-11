@@ -26,6 +26,7 @@ namespace NaturalScience {
         for(let i=0; i<26; i++){
             deta[i]=_deta[i]
         }
+        basic.pause(50);
     }
 
     //紫外线
@@ -83,6 +84,10 @@ namespace NaturalScience {
     //     let buf=pins.i2cReadBuffer(0x10, 1)
     //     return buf[0]//pins.i2cReadNumber(0x10, NumberFormat.Int8LE);
     // }
+     /**
+     * Set TDS
+     * @param _value  , eg: 1.1
+     */
     //%weight=96
     //%block="set TDS K|%value"
     export function SetTDSK(_value:number):void{
@@ -127,31 +132,43 @@ namespace NaturalScience {
      * OLED 12864 shows the string
      * @param _row (16 pixels per line), eg: 1
      * @param _column  , eg: 1
-     * @param leng  , eg: 16
+     * @param _leng  , eg: 16
      */
     //%weight=90
     //% _value.defl="DFRobot"
     //% _row.min=1 _row.max=8
     //% _column.min=1 _column.max=16
-
+    //% inlineInputMode=inline
     //%block="set OLED row|%_row column|%_column leng|%leng display|%_value"
     export function OLEDString(_row:number, _column:number,_leng:number, _value:string):void{
-        let buffer:Buffer
-            buffer = pins.createBuffer(_leng+3)
+        if(_value.length<17){
+            let buffer:Buffer
+            buffer = pins.createBuffer(_value.length+3)
             buffer[0]=0x28
             buffer[1]=_row;
             buffer[2]=_column;
-            for (let i = 0;i < _leng; i++){
+            for (let i = 0;i < _value.length; i++){
                 buffer[i+3]=_value.charCodeAt(i);
-      
-        pins.i2cWriteBuffer(0x10, buffer);
-        if(_value.length+_column<16){
+            }
+            pins.i2cWriteBuffer(0x10, buffer);
+        }
+        else{
+            let buffer:Buffer
+            buffer = pins.createBuffer(19)
+            buffer[0]=0x28
+            buffer[1]=_row;
+            buffer[2]=_column;
+            for (let i = 0;i < 16; i++){
+                buffer[i+3]=_value.charCodeAt(i);
+            }
+            pins.i2cWriteBuffer(0x10, buffer);
+        }
+        if(_value.length+_column<=_leng){
             ClearOLED(_row, _value.length+_column , _leng+_column);}
         else{
-             ClearOLED(_row, 16 , 16);
+             ClearOLED(_row, _leng , _leng);
         }
         basic.pause(50);
-    }
     }
 
 
@@ -180,7 +197,7 @@ namespace NaturalScience {
              buffer[i+3]=32;
          }
         pins.i2cWriteBuffer(0x10, buffer);
-         basic.pause(50);
+        basic.pause(50);
     }
     /**
      * Clear display
@@ -399,7 +416,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
     //% weight=86
     //% blockExternalInputs=1
-    //% blockId=microIoT_MQTT block="Micro:IoT setup mqtt|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP:%IP server:%SERVERS"
+    //% blockId=microIoT_MQTT block="Micro:IoT setup mqtt|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
     export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,IP: string, servers: SERVERS):
@@ -557,7 +574,8 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
     //% weight=81
     //% blockId=microIoT_http_TK_GET
-    //% block="ThingSpeak(Get) | key %KEY|value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
+    //% block="ThingSpeak(Get) | key %KEY||value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
+    //% inlineInputMode=inline
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
         let tempStr = ""
@@ -574,6 +592,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     //% weight=80
     //% blockId=microIoT_http_post
     //% block="IFTTT(post) | value1 %value1| value2 %value2| value3 %value3| timeout(ms) %time"
+    //% inlineInputMode=inline
     export function microIoT_http_post(value1: string, value2: string, value3: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, microIoT_WEBHOOKS_URL)
         let tempStr = ""
@@ -695,4 +714,5 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     basic.forever(function () {
         microIoT_InquireStatus();
     })
+    
 }
