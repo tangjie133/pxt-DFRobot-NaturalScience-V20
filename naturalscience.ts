@@ -1,10 +1,22 @@
+/** 
+ * @file pxt-DFRobot_NaturalScience-V20/naturalscience.ts
+ * @brief DFRobot's NaturalScience makecode library.
+ * @n [Get the module here](等官网网址)
+ * @n 
+ * 
+ * @copyright    [DFRobot](http://www.dfrobot.com), 2016
+ * @copyright    MIT Lesser General Public License
+ * 
+ * @author [email](jie.tang@dfrobot.com)
+ * @date  2020-5-28
+*/
 
 enum BME{
-    //%block="Temperature"
+    //%block="Temperature(°C)"
     TEMP = 1,
-    //%block="Humidity"
+    //%block="Humidity(%)"
     HUM = 2,
-    //%block="Pressure"
+    //%block="Pressure(kPa)"
     PRESSURE = 3
 }
 
@@ -21,184 +33,221 @@ enum DIR {
     CCW = 2
 }
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
+//% groups="[ 'Sensor', 'OLED', 'IOT', 'Motor', 'RGB']"
 namespace naturalScience {
-    let deta:number[]=[];
+    let data:number[]=[];
     //请求数据
-    //%weight=100
-    //%blockId=naturalScience_requstDeta block="Requst Deta"
-    export function requstDeta():void{
+    //%weight=110
+    //% group="Sensor"
+    //%blockId=naturalScience_requstdata block="Requst data"
+    export function requstdata():void{
         pins.i2cWriteNumber(0x10, 8, NumberFormat.Int8LE);
-        let _deta= pins.i2cReadBuffer(0x10, 22)
+        let _data= pins.i2cReadBuffer(0x10, 22)
         for(let i=0; i<26; i++){
-            deta[i]=_deta[i]
+            data[i]=_data[i]
         }
         basic.pause(50);
     }
 
     //紫外线
     //%weight=100
-    //%blockId=naturalScience_ultraviolet block="Get Ultraviolet"
+    //% group="Sensor"
+    //%blockId=naturalScience_ultraviolet block="Ultraviolet"
     export function getUltraviolet():string{
-        return  deta[0] + '.' + deta[1];
+        return  data[0] + '.' + data[1];
     }
     //光线
     //%weight=99
-    //%blockId=naturalScience_light block="Get Light intensity value"、
+    //% group="Sensor"
+    //%blockId=naturalScience_light block="Light level"
     export function getLight():number{
-      return (deta[2]<<8)|deta[3];
+      return (data[2]<<8)|data[3];
     }
     //声音
     //%weight=98
-    //%blockId=naturalScience_sound block="Get Sound intensity"
+    //% group="Sensor"
+    //%blockId=naturalScience_sound block="Sound level"
     export function getSound():number{
-        return (deta[4]<<8)|deta[5];
+        return (data[4]<<8)|data[5];
     }
     //18B20
     //%weight=97
-    //%blockId=naturalScience_watertemp block="Get Watertemp"
+    //% group="Sensor"
+    //%blockId=naturalScience_watertemp block="Water Temperature(°C)"
     export function getWatertemp():string{
-        return deta[6] + '.' + deta[7];
+        return data[6] + '.' + data[7];
     }
 
-    //BME
+    /**
+     * bme
+     */
     //%weight=96
-    //%blockId=naturalScience_BME block="Get|%_status"
-    export function getBME(_status:BME):string{
-        if(_status==1){
-            if(deta[8]==1){
-                return deta[9] + '.' + deta[10];
+    //% group="Sensor"
+    //%blockId=naturalScience_BME block="%mode"
+    export function getBME(mode:BME):string{
+        if(mode==1){
+            if(data[8]==1){
+                return data[9] + '.' + data[10];
             }else{
-                return '-' + deta[9] + '.' + (255-deta[10]);
+                return '-' + data[9] + '.' + (255-data[10]);
             }
-        }else if(_status==2){
-            return deta[11] + '.' + deta[12] + '%';
+        }else if(mode==2){
+            return data[11] + '.' + data[12];
         }else{
-            return ((deta[13]<<16)|(deta[14]<<8)|deta[15]).toString();
+            let position:number= (((data[13]<<16)|(data[14]<<8)|data[15])/1000).toString().indexOf(".");
+            return (((data[13]<<16)|(data[14]<<8)|data[15])/1000).toString().substr(0, position+3);
         }
         return ' '
     }
+
     //TDS
     //%weight=95
-    //%blockId=naturalScience_TDS block="Get TDS"
+    //% group="Sensor"
+    //%blockId=naturalScience_TDS block="TDS"
     export function getTDS():number{
-        return (deta[16]<<8)|deta[17]
+        return (data[16]<<8)|data[17]
     }
-    // //%weight=94
-    // //%block="get TDS K value"
-    // export function GetTDSK():number{
-    //     pins.i2cWriteNumber(0x10, 0x1f, NumberFormat.Int8LE);
-    //     let buf=pins.i2cReadBuffer(0x10, 1)
-    //     return buf[0]//pins.i2cReadNumber(0x10, NumberFormat.Int8LE);
-    // }
-     /**
+
+    /**
      * Set TDS
-     * @param _value  , eg: 1.1
+     * @param value  , eg: 1.1
      */
-    //%weight=96
+
+    //%weight=80
+    //% group="Sensor"
     //%blockId=naturalScience_SetTDSK block="Set TDS K|%value"
-    export function setTDSK(_value:number):void{
-        let position:number=_value.toString().indexOf(".");
-        let __value = _value*100;
+    export function setTDSK(value:number):void{
+        let position:number=value.toString().indexOf(".");
+        let _value = value*100;
         let buffer = pins.createBuffer(3);
         buffer[0]=0x1E;
-        buffer[1]=parseInt(__value.toString().substr(0, position));
-        buffer[2]=parseInt(__value.toString().substr(position, position+1));
+        buffer[1]=parseInt(_value.toString().substr(0, position));
+        buffer[2]=parseInt(_value.toString().substr(position, position+1));
         pins.i2cWriteBuffer(0x10, buffer);
     }
-    //CO2
+    /**
+     * CO2
+     */
     //%weight=93
-    //%blockId=naturalScience_TVOC block="Get|%_value value"
-    export function getTVOC(_value:CT):number{
-        if(_value==1){
-            return (deta[18]<<8)|deta[19];
+    //% group="Sensor"
+    //%blockId=naturalScience_TVOC block="%value value"
+    export function getTVOC(mode:CT):number{
+        if(mode==1){
+            return (data[18]<<8)|data[19];
         }else{
-            return (deta[20]<<8)|deta[21];
+            return (data[20]<<8)|data[21];
         }
         return 0;
     }
-    // //基线值
-    // //%weight=92
-    // //%block="get baseline value"
-    // export function GetBaseline():number{
-    //     return (deta[24]<<8)|deta[25];
-    // }
+  
     //设置基线值
-    //%weight=91
-    //%blockId=naturalScience_setBaseline block="Set baseline|%_value value"
-    export function setBaseline(_value:number):void{
-        //parseInt(_value.toString(),16)
+    //%weight=81
+    //% group="Sensor"
+    //%blockId=naturalScience_setBaseline block="Set TVOC and CO2 baseline|%value value"
+    export function setBaseline(value:number):void{
         let buffer:Buffer = pins.createBuffer(3);
         buffer[0]=0x20;
-        buffer[1]=_value>>8&0xff
-        buffer[2]=_value&0xff
+        buffer[1]=value>>8&0xff;
+        buffer[2]=value&0xff;
         pins.i2cWriteBuffer(0x10, buffer);
     }
 
     /**
      * OLED 12864 shows the string
-     * @param _row (16 pixels per line), eg: 1
-     * @param _column  , eg: 1
-     * @param _leng  , eg: 16
+     * @param srow (16 pixels per line), eg: 1
+     * @param scolumn  , eg: 1
+     * @param sleng  , eg: 16
      */
-    //%weight=90
-    //% _value.defl="DFRobot"
-    //% _row.min=1 _row.max=8
-    //% _column.min=1 _column.max=16
+    //%weight=91
+    //% group="OLED"
+    //% String.defl="Hi DFRobot"
+    //% srow.min=1 srow.max=8
+    //% scolumn.min=1 scolumn.max=16
+    //% sleng.min=1 sleng.max=16
     //% inlineInputMode=inline
-    //%blockId=naturalScience_OLEDString block="Set OLED row|%_row column|%_column leng|%leng display|%_value"
-    export function setOLEDString(_row:number, _column:number,_leng:number, _value:string):void{
-        if(_value.length<17){
-            let buffer:Buffer
-            buffer = pins.createBuffer(_value.length+3)
-            buffer[0]=0x28
-            buffer[1]=_row;
-            buffer[2]=_column;
-            for (let i = 0;i < _value.length; i++){
-                buffer[i+3]=_value.charCodeAt(i);
+    //%blockId=naturalScience_OLEDString block="OLED row|%srow start column|%scolumn stop column|%leng display|%String"
+    export function setOLEDShowString(srow:number, scolumn:number,sleng:number, String:string):void{
+        if(String.length<17){
+            if(String.length<(sleng-scolumn)+1){
+                let buffer:Buffer
+                buffer = pins.createBuffer(String.length+3)
+                buffer[0]=0x28
+                buffer[1]=srow;
+                buffer[2]=scolumn;
+                for (let i = 0;i < String.length; i++){
+                    buffer[i+3]=String.charCodeAt(i);
+                }
+                pins.i2cWriteBuffer(0x10, buffer);
+                clearOLED(srow, String.length+scolumn , sleng);
             }
-            pins.i2cWriteBuffer(0x10, buffer);
+            else{
+                let buffer:Buffer
+                buffer = pins.createBuffer((sleng-scolumn)+4)
+                buffer[0]=0x28
+                buffer[1]=srow;
+                buffer[2]=scolumn;
+                for (let i = 0;i < (sleng-scolumn)+1; i++){
+                    buffer[i+3]=String.charCodeAt(i);
+                }
+                pins.i2cWriteBuffer(0x10, buffer);
+            }
+            
         }
         else{
             let buffer:Buffer
             buffer = pins.createBuffer(19)
             buffer[0]=0x28
-            buffer[1]=_row;
-            buffer[2]=_column;
+            buffer[1]=srow;
+            buffer[2]=scolumn;
             for (let i = 0;i < 16; i++){
-                buffer[i+3]=_value.charCodeAt(i);
+                buffer[i+3]=String.charCodeAt(i);
             }
             pins.i2cWriteBuffer(0x10, buffer);
         }
-        if(_value.length+_column<=_leng){
-            clearOLED(_row, _value.length+_column , _leng+_column);}
-        else{
-             clearOLED(_row, _leng , _leng);
-        }
+          
         basic.pause(50);
     }
 
-
+    /**
+     * OLED 12864 shows the number
+     * @param nrow (16 pixels per line), eg: 1
+     * @param ncolumn  , eg: 1
+     * @param nleng  , eg: 16
+     * @param Number  , eg: 2020
+     */
+    //%weight=90
+    //% group="OLED"
+    //% value.defl="DFRobot"
+    //% nrow.min=1 nrow.max=8
+    //% ncolumn.min=1 ncolumn.max=16
+    //% nleng.min=1 nleng.max=16
+    //% inlineInputMode=inline
+    //%blockId=naturalScience_OLEDNumber block="OLED row|%srow start column|%scolumn stop column|%leng display|%Number"
+    export function setOLEDShowNumber(nrow:number, ncolumn:number,nleng:number, Number:number):void{
+        setOLEDShowString(nrow, ncolumn, nleng, Number.toString());
+    }
 
     
     /**
      * Clear display
-     * @param _valuerow (16 pixels per line), eg: 1
-     * @param _valuecolumnstart  , eg: 1
-     * @param _valuecolumnstop  , eg: 1
+     * @param valuerow (16 pixels per line), eg: 1
+     * @param valuecolumnstart  , eg: 1
+     * @param valuecolumnstop  , eg: 1
      */
     //%weight=89
-    //% _valuerow.min=1 _valuerow.max=8
-    //% _valuecolumnstart.min=1 _valuecolumnstart.max=16
-    //% _valuecolumnstop.min=1 _valuecolumnstop.max=16
-    //%blockId=naturalScience_clearOLED block="Clear OLED row|%_valuerow startrow|%_valuecolumnstart stoprow|%_valuecolumnstop "
-    export function clearOLED(_valuerow:number, _valuecolumnstart:number, _valuecolumnstop:number):void{
-        let datalength:number = _valuecolumnstop - _valuecolumnstart
+    //% group="OLED"
+    //% valuerow.min=1 valuerow.max=8
+    //% valuecolumnstart.min=1 valuecolumnstart.max=16
+    //% valuecolumnstop.min=1 valuecolumnstop.max=16
+    //%blockId=naturalScience_clearOLED block="Clear OLED row|%valuerow start Column|%valuecolumnstart stop Column|%valuecolumnstop "
+    export function clearOLED(valuerow:number, valuecolumnstart:number, valuecolumnstop:number):void{
+        let datalength:number = (valuecolumnstop - valuecolumnstart) + 1
         if (datalength < 0)
             return;  
         let buffer:Buffer = pins.createBuffer(datalength+3);
         buffer[0]=0x28
-        buffer[1]=_valuerow;
-        buffer[2]=_valuecolumnstart;
+        buffer[1]=valuerow;
+        buffer[2]=valuecolumnstart;
          for(let i=0; i < datalength; i++){
              buffer[i+3]=32;
          }
@@ -207,15 +256,16 @@ namespace naturalScience {
     }
     /**
      * Clear display
-     * @param _valuerow (16 pixels per line), eg: 1
+     * @param valuerow (16 pixels per line), eg: 1
      */
     //%weight=88
-    //% _valuerow.min=1 _valuerow.max=8
-    //%blockId=naturalScience_clearOLEDRow block="Clear OLED row|%_valuerow"
-    export function clearOLEDRow(_valuerow:number):void{
+    //% group="OLED"
+    //% valuerow.min=1 valuerow.max=8
+    //%blockId=naturalScience_clearOLEDRow block="Clear OLED row|%valuerow"
+    export function clearOLEDRow(valuerow:number):void{
         let buffer:Buffer = pins.createBuffer(19);
         buffer[0]=0x28
-        buffer[1]=_valuerow;
+        buffer[1]=valuerow;
         buffer[2]=1;
         for(let i=0; i < 16; i++){
              buffer[i+3]=32;
@@ -226,7 +276,8 @@ namespace naturalScience {
     /**
      * 电机
      */
-    //%weight=88
+    //%weight=89
+    //% group="Motor"
     //% _speed.min=0 _speed.max=255
     //%blockId=naturalScience_mototRun block="Motor control direction|%_direction speed|%_speed"
     export function mototRun(_direction: DIR, _speed: number): void {
@@ -241,6 +292,7 @@ namespace naturalScience {
      * 电机停止
      */
     //%weight=88
+    //% group="Motor"
     //%blockId=naturalScience_mototStop block="Motorstop"
     export function mototStop(): void {
             let buf = pins.createBuffer(3)
@@ -261,12 +313,12 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     let Topic2CallBack: Action = null;
     let Topic3CallBack: Action = null;
     let Topic4CallBack: Action = null;
-    let Wifi_Status = 0x00
+    let Wifimode = 0x00
 
     let microIoT_WEBHOOKS_KEY = ""
     let microIoT_WEBHOOKS_EVENT = ""
 
-    let READ_STATUS = 0x00
+    let READmode = 0x00
     let SET_PARA = 0x01
     let RUN_COMMAND = 0x02
 
@@ -378,7 +430,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     function microIoT_readStatus(para: number): number {
         let buf = pins.createBuffer(3);
         buf[0] = 0x1E
-        buf[1] = READ_STATUS
+        buf[1] = READmode
         buf[2] = para
         pins.i2cWriteBuffer(IIC_ADDRESS, buf);
         let recbuf = pins.createBuffer(2)
@@ -392,7 +444,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
         let tempLen = 0x00
         let dataValue = ""
         buf[0] = 0x1E
-        buf[1] = READ_STATUS
+        buf[1] = READmode
         buf[2] = para
         pins.i2cWriteBuffer(IIC_ADDRESS, buf);
         microIoT_CheckStatus("READ_IP");
@@ -426,14 +478,15 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param PASSWORD to PASSWORD ,eg: "yourPASSWORD"
     */
 
-    //% weight=87
-    //% blockId=naturalScience_microIoT_WIFI block="Micro:IoT setup |Wi-Fi: |name: %SSID| password：%PASSWORD"
+    //% weight=80
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure |name: %SSID| password：%PASSWORD"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
         microIoT_setPara(SETWIFI_NAME, SSID)
         microIoT_setPara(SETWIFI_PASSWORLD, PASSWORD)
         microIoT_runCommand(CONNECT_WIFI)
         microIoT_CheckStatus("WiFiConnected");
-        Wifi_Status = WIFI_CONNECTED
+        Wifimode = WIFI_CONNECTED
     }
 
     /**
@@ -446,9 +499,10 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param IP to IP ,eg: "192.168."
     */
 
-    //% weight=86
+    //% weight=79
+    //% group="IOT"
     //% blockExternalInputs=1
-    //% blockId=naturalScience_microIoT_MQTT block="Micro:IoT setup mqtt|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
+    //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
     export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,IP: string, servers: SERVERS):
@@ -478,11 +532,11 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * Add an MQTT subscription
      */
 
-    //% weight=85
+    //% weight=76
+    //% group="IOT"
     //% blockId=naturalScience_microIoT_add_topic
     //% block="subscribe additional %top |: %IOT_TOPIC"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
-    //% advanced=true
     export function microIoT_add_topic(top: TOPIC, IOT_TOPIC: string): void {
         microIoT_ParaRunCommand((top + 0x06), IOT_TOPIC);
         microIoT_CheckStatus("SubTopicOK");
@@ -494,7 +548,8 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param Mess to Mess ,eg: "mess"
      */
 
-    //% weight=84
+    //% weight=77
+    //% group="IOT"
     //% blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %string| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
@@ -547,8 +602,9 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     /**
      * MQTT processes the subscription when receiving message
      */
-    //% weight=83
+    //% weight=76
     //% blockGap=60
+    //% group="IOT"
     //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top |received"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
     export function microIoT_MQTT_Event(top: TOPIC, cb: (message: string) => void) {
@@ -565,11 +621,12 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param EVENT to EVENT ,eg: "yourEvent"
     * @param KEY to KEY ,eg: "yourKey"
     */
-    //% weight=82
+    //% weight=75
+    //% group="IOT"
     //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
     //% send.fieldEditor="gridpicker" send.fieldOptions.columns=3
     //% blockId=naturalScience_microIoT_http_IFTTT
-    //% block="Webhooks config:|event: %EVENT|key: %KEY|"
+    //% block="IFTTT configure|event: %EVENT|key: %KEY|"
     export function microIoT_http_IFTTT(EVENT: string, KEY: string): void {
         microIoT_WEBHOOKS_EVENT = EVENT
         microIoT_WEBHOOKS_KEY = KEY
@@ -604,7 +661,8 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param time set timeout, eg: 10000
     */
 
-    //% weight=81
+    //% weight=73
+    //% group="IOT"
     //% blockId=naturalScience_microIoT_http_TK_GET
     //% block="ThingSpeak(Get) | key %KEY|value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
@@ -620,7 +678,8 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
      * @param time set timeout, eg: 10000
     */
 
-    //% weight=80
+    //% weight=74
+    //% group="IOT"
     //% blockId=naturalScience_microIoT_http_post
     //% block="IFTTT(post) | value1 %value1| value2 %value2| value3 %value3| timeout(ms) %time"
     //% inlineInputMode=inline
@@ -648,7 +707,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
         let tempId = 0
         let tempStatus = 0
         buf[0] = 0x1E
-        buf[1] = READ_STATUS
+        buf[1] = READmode
         buf[2] = 0x06
         pins.i2cWriteBuffer(IIC_ADDRESS, buf);
         let recbuf = pins.createBuffer(2)
