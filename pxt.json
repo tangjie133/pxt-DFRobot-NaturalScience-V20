@@ -10,7 +10,8 @@
         "README.md",
         "ws2812b.ts",
         "sendBuffer.asm",
-        "naturalscience.ts"
+        "naturalscience.ts",
+		"_locales/zh/DFRobot-Naturalscience-V2.0.json"
     ],
     "testFiles": [
         "test.ts"
