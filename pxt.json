@@ -11,7 +11,7 @@
         "ws2812b.ts",
         "sendBuffer.asm",
         "naturalscience.ts",
-        "_locales/zh/Naturalscience.json"
+        "_locales/zh/Naturalscience-strings.json"
     ],
     "testFiles": [
         "test.ts"
