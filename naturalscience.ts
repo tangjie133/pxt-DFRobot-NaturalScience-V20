@@ -216,7 +216,7 @@ namespace naturalScience {
 
     //%weight=80
     //% group="Sensor"
-    //%blockId=naturalScience_SetTDSK block="Set TDS K|%value"
+    //%blockId=naturalScience_SetTDSK block="Set TDS K value|%value"
     export function setTDSK(value:number):void{
         let position:number=value.toString().indexOf(".");
         let _value = value*100;
