@@ -8,7 +8,7 @@
     },
     "files": [
         "README.md",
-		"ws2812b.ts",
+        "ws2812b.ts",
         "sendBuffer.asm",
         "naturalscience.ts"
     ],

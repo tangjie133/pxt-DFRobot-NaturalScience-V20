@@ -1,31 +1,127 @@
+# NaturalScience
 
-> 在 [https://tangjie133.github.io/pxt-dfrobot-naturalscience-v20/](https://tangjie133.github.io/pxt-dfrobot-naturalscience-v20/) 打开此页面
+[无](无)
+## Basic usage
 
-## Use as Extension
+* 请求传感器数据
 
-This repository can be added as an **extension** in MakeCode.
+```blocks
 
-* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-* click on **New Project**
-* click on **Extensions** under the gearwheel menu
-* search for **https://github.com/tangjie133/pxt-dfrobot-naturalscience-v20** and import
+    basic.forever(function () {
+        naturalScience.requstdata()
+    })
 
-## Edit this project ![构建状态标志](https://github.com/tangjie133/pxt-dfrobot-naturalscience-v20/workflows/MakeCode/badge.svg)
+```
 
-To edit this repository in MakeCode.
+* 控制电机的方向、速度和停止
 
-* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-* click on **Import** then click on **Import URL**
-* paste **https://github.com/tangjie133/pxt-dfrobot-naturalscience-v20** and click import
+```blocks
 
-## 积木块预览
+    basic.forever(function () {
+        naturalScience.mototRun(DIR.CW, 100)
+        basic.pause(1000)
+        naturalScience.mototStop()
+        basic.pause(1000)
+    })
 
-This image shows the blocks code from the last commit in master.
-This image may take a few minutes to refresh.
+```
+* 控制RGB灯显示不同颜色
 
-![块的渲染视图](https://github.com/tangjie133/pxt-dfrobot-naturalscience-v20/raw/master/.github/makecode/blocks.png)
+```blocks
 
-#### 元数据 (用于搜索、渲染)
+    naturalScience.microIoT_setBrightness(100)
+    basic.forever(function () {
+        naturalScience.microIoT_setIndexColor(naturalScience.microIoT_ledRange(0, 3), 0xffff00)
+        basic.pause(1000)
+        naturalScience.ledRainbow(1, 360)
+        basic.pause(1000)
+        naturalScience.microIoT_ledBlank()
+        basic.pause(1000)
+    })
+
+```
+* OLED显示模块可以用于显示传感器数据，数字和字符串都能够在屏幕上面显示
+
+```blocks
+
+    basic.forever(function () {
+        naturalScience.setOLEDShowString(1, 16, 1, "Hi DFRobot")
+        naturalScience.setOLEDShowNumber(1, 16, 1, 2020)
+    })
+
+```
+
+* 清除OLED显示屏上的数字或字符串，能够清除指定位置的字符串和数字也能清除整行数据
+
+```blocks
+
+    basic.forever(function () {
+        naturalScience.clearOLED(1, 16, 1)
+        naturalScience.clearOLEDRow(1)
+    })
+
+```
+
+* 在OLED上显示传感器数据
+
+```blocks
+
+    basic.forever(function () {
+        naturalScience.requstdata()
+        naturalScience.setOLEDShowString(1, 7, 1, "UV:" + naturalScience.getUltraviolet())
+        naturalScience.setOLEDShowString(8, 16, 1, "-SOD:" + naturalScience.getSound())
+        naturalScience.setOLEDShowString(1, 7, 2, "TC:" + convertToText(naturalScience.getTVOC(CT.TVOC)))
+        naturalScience.setOLEDShowString(8, 16, 2, "-CO2:" + convertToText(naturalScience.getTVOC(CT.CO2)))
+        naturalScience.setOLEDShowString(1, 7, 3, "TE:" + naturalScience.getBME(BME.TEMP))
+        naturalScience.setOLEDShowString(8, 16, 3, "-WTE:" + naturalScience.getWatertemp())
+        naturalScience.setOLEDShowString(1, 7, 4, "LI:" + convertToText(naturalScience.getLight()))
+        naturalScience.setOLEDShowString(8, 16, 4, "-TDS:" + convertToText(naturalScience.getTDS()))
+        naturalScience.setOLEDShowString(1, 16, 5, "HU:" + naturalScience.getBME(BME.HUM))
+        naturalScience.setOLEDShowString(1, 16, 6, "PE:" + naturalScience.getBME(BME.PRESSURE))
+    })
+
+```
+
+* IOT控制模块，通过配置能够访问IFTTT、Thingspeak、SIOT、EasyIOT物联网平台
+
+```blocks
+
+    input.onButtonPressed(Button.A, function () {
+        naturalScience.microIoT_SendMessage("78", naturalScience.TOPIC.topic_0)
+    })
+    input.onButtonPressed(Button.AB, function () {
+        naturalScience.microIoT_http_post("12", "344", "44", 10000)
+    })
+    input.onButtonPressed(Button.B, function () {
+        naturalScience.microIoT_http_TK_GET(
+        "GX8STNEAUFMWNBDG",
+        "95",
+        "12",
+        "8",
+        "",
+        "",
+        "",
+        "",
+        10000
+        )
+    })
+    naturalScience.microIoT_WIFI("hitest", "12345678")
+    naturalScience.microIoT_http_IFTTT("BBB", "dtpfTlU3Wqa8y0HRh77xXE")
+    naturalScience.microIoT_MQTT(
+    "rHpr0RcWR",
+    "9NtrAg5ZRz",
+    "DN5FYlDZR",
+    "192.168.",
+    naturalScience.SERVERS.China
+    )
+
+```
+## License
+
+MIT
+
+Copyright (c) 2020, microbit/micropython Chinese community  
+
+## Supported targets
 
 * for PXT/microbit
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>

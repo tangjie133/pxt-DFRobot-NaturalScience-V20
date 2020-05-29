@@ -11,6 +11,11 @@
  * @date  2020-5-28
 */
 
+const OBLOQ_MQTT_EASY_IOT_SERVER_CHINA = "iot.dfrobot.com.cn"
+const OBLOQ_MQTT_EASY_IOT_SERVER_EN = "iot.dfrobot.com"
+const microIoT_WEBHOOKS_URL = "maker.ifttt.com"
+const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
+
 enum BME{
     //%block="Temperature(°C)"
     TEMP = 1,
@@ -26,17 +31,103 @@ enum CT{
     //%block="TVOC"
     TVOC=2
 }
+
 enum DIR {
     //% block="CW"
     CW = 1,
     //% block="CCW"
     CCW = 2
 }
+
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
 //% groups="[ 'Sensor', 'OLED', 'IOT', 'Motor', 'RGB']"
 namespace naturalScience {
     let data:number[]=[];
-    //请求数据
+    let _brightness = 255
+    let neopixel_buf = pins.createBuffer(16 * 3);
+    for (let i = 0; i < 16 * 3; i++) {
+        neopixel_buf[i] = 0
+    }
+    let IIC_ADDRESS = 0x16
+    let Topic0CallBack: Action = null;
+    let Topic1CallBack: Action = null;
+    let Topic2CallBack: Action = null;
+    let Topic3CallBack: Action = null;
+    let Topic4CallBack: Action = null;
+    let Wifimode = 0x00
+
+    let microIoT_WEBHOOKS_KEY = ""
+    let microIoT_WEBHOOKS_EVENT = ""
+
+    let READmode = 0x00
+    let SET_PARA = 0x01
+    let RUN_COMMAND = 0x02
+
+    /*set para*/
+    let SETWIFI_NAME = 0x01
+    let SETWIFI_PASSWORLD = 0x02
+    let SETMQTT_SERVER = 0x03
+    let SETMQTT_PORT = 0x04
+    let SETMQTT_ID = 0x05
+    let SETMQTT_PASSWORLD = 0x06
+    let SETHTTP_IP = 0x07
+
+    /*run command*/
+    let CONNECT_WIFI = 0x02
+    let CONNECT_MQTT = 0x05
+    let SUB_TOPIC0 = 0x06
+    let SUB_TOPIC1 = 0x07
+    let SUB_TOPIC2 = 0x08
+    let SUB_TOPIC3 = 0x09
+    let SUB_TOPIC4 = 0x0A
+    let PUB_TOPIC0 = 0x0B
+    let PUB_TOPIC1 = 0x0C
+    let PUB_TOPIC2 = 0x0D
+    let PUB_TOPIC3 = 0x0E
+    let PUB_TOPIC4 = 0x0F
+    let GET_URL = 0x10
+    let POST_URL = 0x11
+
+    /*read para value*/
+    let READ_PING = 0x01
+    let READ_WIFISTATUS = 0x02
+    let READ_IP = 0x03
+    let READ_MQTTSTATUS = 0x04
+    let READ_SUBSTATUS = 0x05
+    let READ_TOPICDATA = 0x06
+    let HTTP_REQUEST = 0x10
+    let READ_VERSION = 0x12
+
+    /*para status */
+    let PING_OK = 0x01
+    let WIFI_DISCONNECT = 0x00
+    let WIFI_CONNECTING = 0x02
+    let WIFI_CONNECTED = 0x03
+    let MQTT_CONNECTED = 0x01
+    let MQTT_CONNECTERR = 0x02
+    let SUB_TOPIC_OK = 0x01
+    let SUB_TOPIC_Ceiling = 0x02
+   
+    let microIoTStatus = ""
+    let WIFI_NAME = ""
+    let WIFI_PASSWORLD = ""
+    let MQTT_SERVER = ""
+    let MQTT_PORT = ""
+    let MQTT_ID = ""
+    let MQTT_PASSWORLD = ""
+    let Topic_0 = ""
+    let Topic_1 = ""
+    let Topic_2 = ""
+    let Topic_3 = ""
+    let Topic_4 = ""
+    let RECDATA = ""
+    let HTTP_IP = ""
+    let HTTP_PORT = ""
+    let microIoT_IP = "0.0.0.0"
+    let G_city = 0;
+    /**
+     * 请求数据
+     */
     //%weight=110
     //% group="Sensor"
     //%blockId=naturalScience_requstdata block="Requst data"
@@ -49,28 +140,36 @@ namespace naturalScience {
         basic.pause(50);
     }
 
-    //紫外线
+    /**
+     * 读取紫外线强度
+     */
     //%weight=100
     //% group="Sensor"
     //%blockId=naturalScience_ultraviolet block="Ultraviolet"
     export function getUltraviolet():string{
         return  data[0] + '.' + data[1];
     }
-    //光线
+    /**
+     * 获取自然光线值
+     */
     //%weight=99
     //% group="Sensor"
     //%blockId=naturalScience_light block="Light level"
     export function getLight():number{
       return (data[2]<<8)|data[3];
     }
-    //声音
+    /**
+     * 获取声音强度
+     */
     //%weight=98
     //% group="Sensor"
     //%blockId=naturalScience_sound block="Sound level"
     export function getSound():number{
         return (data[4]<<8)|data[5];
     }
-    //18B20
+    /**
+     * 获取水温
+     */
     //%weight=97
     //% group="Sensor"
     //%blockId=naturalScience_watertemp block="Water Temperature(°C)"
@@ -79,7 +178,7 @@ namespace naturalScience {
     }
 
     /**
-     * bme
+     * 通过下拉框选择获取相应数据
      */
     //%weight=96
     //% group="Sensor"
@@ -100,7 +199,9 @@ namespace naturalScience {
         return ' '
     }
 
-    //TDS
+    /**
+     * 获取TDS值
+     */
     //%weight=95
     //% group="Sensor"
     //%blockId=naturalScience_TDS block="TDS"
@@ -109,7 +210,7 @@ namespace naturalScience {
     }
 
     /**
-     * Set TDS
+     * 通过修改K值修正TDS数据
      * @param value  , eg: 1.1
      */
 
@@ -126,7 +227,7 @@ namespace naturalScience {
         pins.i2cWriteBuffer(0x10, buffer);
     }
     /**
-     * CO2
+     * 通过下拉框获取相应数据
      */
     //%weight=93
     //% group="Sensor"
@@ -140,7 +241,10 @@ namespace naturalScience {
         return 0;
     }
   
-    //设置基线值
+    /**
+     * 设置TVOC和CO2基准线(基准线值请填写十进制值)
+     * @param value  , eg: 33915
+     */
     //%weight=81
     //% group="Sensor"
     //%blockId=naturalScience_setBaseline block="Set TVOC and CO2 baseline|%value value"
@@ -153,7 +257,7 @@ namespace naturalScience {
     }
 
     /**
-     * OLED 12864 shows the string
+     * 在OLED显示屏指定位置显示字符串
      * @param srow (16 pixels per line), eg: 1
      * @param scolumn  , eg: 1
      * @param sleng  , eg: 16
@@ -164,9 +268,9 @@ namespace naturalScience {
     //% srow.min=1 srow.max=8
     //% scolumn.min=1 scolumn.max=16
     //% sleng.min=1 sleng.max=16
-    //% inlineInputMode=inline
-    //%blockId=naturalScience_OLEDString block="OLED row|%srow start column|%scolumn stop column|%leng display|%String"
-    export function setOLEDShowString(srow:number, scolumn:number,sleng:number, String:string):void{
+    //% inlineInputMode=inline                 
+    //%blockId=naturalScience_OLEDString block="OLED from column |%scolumn to |%leng in row |%srow display string |%String"
+    export function setOLEDShowString(scolumn:number,sleng:number, srow:number, String:string):void{
         if(String.length<17){
             if(String.length<(sleng-scolumn)+1){
                 let buffer:Buffer
@@ -209,7 +313,7 @@ namespace naturalScience {
     }
 
     /**
-     * OLED 12864 shows the number
+     * 在OLED显示屏指定位置显示数字
      * @param nrow (16 pixels per line), eg: 1
      * @param ncolumn  , eg: 1
      * @param nleng  , eg: 16
@@ -222,25 +326,25 @@ namespace naturalScience {
     //% ncolumn.min=1 ncolumn.max=16
     //% nleng.min=1 nleng.max=16
     //% inlineInputMode=inline
-    //%blockId=naturalScience_OLEDNumber block="OLED row|%srow start column|%scolumn stop column|%leng display|%Number"
-    export function setOLEDShowNumber(nrow:number, ncolumn:number,nleng:number, Number:number):void{
+    //%blockId=naturalScience_OLEDNumber block="OLED from column |%scolumn to |%leng in row |%srow display number|%Number"
+    export function setOLEDShowNumber(ncolumn:number,nleng:number, nrow:number, Number:number):void{
         setOLEDShowString(nrow, ncolumn, nleng, Number.toString());
     }
 
     
     /**
-     * Clear display
+     * 清除OLED屏指定位置的字符串或数字
      * @param valuerow (16 pixels per line), eg: 1
      * @param valuecolumnstart  , eg: 1
-     * @param valuecolumnstop  , eg: 1
+     * @param valuecolumnstop  , eg: 16
      */
     //%weight=89
     //% group="OLED"
     //% valuerow.min=1 valuerow.max=8
     //% valuecolumnstart.min=1 valuecolumnstart.max=16
     //% valuecolumnstop.min=1 valuecolumnstop.max=16
-    //%blockId=naturalScience_clearOLED block="Clear OLED row|%valuerow start Column|%valuecolumnstart stop Column|%valuecolumnstop "
-    export function clearOLED(valuerow:number, valuecolumnstart:number, valuecolumnstop:number):void{
+    //%blockId=naturalScience_clearOLED block="Clear OLED from column|%valuecolumnstart to |%valuecolumnstop in row |%valuerow "
+    export function clearOLED(valuecolumnstart:number, valuecolumnstop:number, valuerow:number):void{
         let datalength:number = (valuecolumnstop - valuecolumnstart) + 1
         if (datalength < 0)
             return;  
@@ -255,7 +359,7 @@ namespace naturalScience {
         basic.pause(50);
     }
     /**
-     * Clear display
+     * 清除OLED屏整行的字符串或数字
      * @param valuerow (16 pixels per line), eg: 1
      */
     //%weight=88
@@ -274,12 +378,12 @@ namespace naturalScience {
     }
 
     /**
-     * 电机
+     * 控制电机的方向和速度
      */
     //%weight=89
     //% group="Motor"
     //% _speed.min=0 _speed.max=255
-    //%blockId=naturalScience_mototRun block="Motor control direction|%_direction speed|%_speed"
+    //%blockId=naturalScience_mototRun block="Motor direction|%_direction speed|%_speed control"
     export function mototRun(_direction: DIR, _speed: number): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -289,11 +393,11 @@ namespace naturalScience {
 
     }
     /**
-     * 电机停止
+     * 控住电机停止运行
      */
     //%weight=88
     //% group="Motor"
-    //%blockId=naturalScience_mototStop block="Motorstop"
+    //%blockId=naturalScience_mototStop block="Motor stop"
     export function mototStop(): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -302,90 +406,215 @@ namespace naturalScience {
             pins.i2cWriteBuffer(0x10, buf)
     }
 
-const OBLOQ_MQTT_EASY_IOT_SERVER_CHINA = "iot.dfrobot.com.cn"
-const OBLOQ_MQTT_EASY_IOT_SERVER_EN = "iot.dfrobot.com"
-const microIoT_WEBHOOKS_URL = "maker.ifttt.com"
-const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
+    /** 
+     * Set the three primary color:red, green, and blue
+     */
+    //% weight=60
+    //% group="RGB"
+    //% r.min=0 r.max=255
+    //% g.min=0 g.max=255
+    //% b.min=0 b.max=255
+    //%  block="red|%r green|%g blue|%b"
+    export function microIoT_rgb(r: number, g: number, b: number): number {
+        return (r << 16) + (g << 8) + (b);
+    }
 
-    let IIC_ADDRESS = 0x16
-    let Topic0CallBack: Action = null;
-    let Topic1CallBack: Action = null;
-    let Topic2CallBack: Action = null;
-    let Topic3CallBack: Action = null;
-    let Topic4CallBack: Action = null;
-    let Wifimode = 0x00
+    /**
+     * RGB LEDs light up from A to B 
+     */
+    //% weight=60
+    //% group="RGB"
+    //% from.min=0 from.max3
+    //% to.min=0 to.max=3
+    //% to.defl=3
+    //%  block="RGB LEDs |%from to|%to"
+    export function microIoT_ledRange(from: number, to: number): number {
+        return (from << 16) + (2 << 8) + (to);
+    }
+   /**
+    * Set the color of the specified LEDs
+    */
+    //% weight=60
+    //% group="RGB"
+    //% index.min=0 index.max=3
+    //% rgb.shadow="colorNumberPicker"
+    //%  block="RGB LED |%index show color|%rgb"
+    export function microIoT_setIndexColor(index: number, rgb: number) {
+        let f = index;
+        let t = index;
+        let r = (rgb >> 16) * (_brightness / 255);
+        let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
+        let b = ((rgb) & 0xFF) * (_brightness / 255);
 
-    let microIoT_WEBHOOKS_KEY = ""
-    let microIoT_WEBHOOKS_EVENT = ""
+        if (index > 15) {
+            if (((index >> 8) & 0xFF) == 0x02) {
+                f = index >> 16;
+                t = index & 0xff;
+            } else {
+                f = 0;
+                t = -1;
+            }
+        }
+        for (let i = f; i <= t; i++) {
+            neopixel_buf[i * 3 + 0] = Math.round(g)
+            neopixel_buf[i * 3 + 1] = Math.round(r)
+            neopixel_buf[i * 3 + 2] = Math.round(b)
+        }
+        ws2812b.sendBuffer(neopixel_buf, DigitalPin.P15)
 
-    let READmode = 0x00
-    let SET_PARA = 0x01
-    let RUN_COMMAND = 0x02
+    }
+    /**
+     * Set the color of all RGB LEDs
+     */
+    //% weight=60
+    //% group="RGB"
+    //% rgb.shadow="colorNumberPicker"
+    //%  block="show color |%rgb"
+    export function microIoT_showColor(rgb: number) {
+        let r = (rgb >> 16) * (_brightness / 255);
+        let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
+        let b = ((rgb) & 0xFF) * (_brightness / 255);
+        for (let i = 0; i < 16 * 3; i++) {
+            if ((i % 3) == 0)
+                neopixel_buf[i] = Math.round(g)
+            if ((i % 3) == 1)
+                neopixel_buf[i] = Math.round(r)
+            if ((i % 3) == 2)
+                neopixel_buf[i] = Math.round(b)
+        }
+        ws2812b.sendBuffer(neopixel_buf, DigitalPin.P15)
+    }
+    /**
+     * Set the brightness of RGB LED
+     */
+    //% weight=60
+    //% group="RGB"
+    //% brightness.min=0 brightness.max=255
+    //% block="set brightness to |%brightness"
+    export function microIoT_setBrightness(brightness: number) {
+        _brightness = brightness;
+    }
+    /**
+     * Turn off all RGB LEDs
+     */
+    //% weight=60
+    //%  block="clear all LEDs"
+    export function microIoT_ledBlank() {
+        microIoT_showColor(0)
+    }
+    //% weight=50
+    //% group="RGB"
+    //% startHue.defl=1
+    //% endHue.defl=360
+    //% startHue.min=0 startHue.max=360
+    //% endHue.min=0 endHue.max=360
+    //% blockId=led_rainbow block="Set LED show rainbow color from|%startHue to|%endHue"
+    export function ledRainbow(startHue: number, endHue: number) {
+        startHue = startHue >> 0;
+        endHue = endHue >> 0;
+        const saturation = 100;
+        const luminance = 50;
+        let steps = 3 + 1;
+        const direction = HueInterpolationDirection.Clockwise;
 
-    /*set para*/
-    let SETWIFI_NAME = 0x01
-    let SETWIFI_PASSWORLD = 0x02
-    let SETMQTT_SERVER = 0x03
-    let SETMQTT_PORT = 0x04
-    let SETMQTT_ID = 0x05
-    let SETMQTT_PASSWORLD = 0x06
-    let SETHTTP_IP = 0x07
+        //hue
+        const h1 = startHue;
+        const h2 = endHue;
+        const hDistCW = ((h2 + 360) - h1) % 360;
+        const hStepCW = Math.idiv((hDistCW * 100), steps);
+        const hDistCCW = ((h1 + 360) - h2) % 360;
+        const hStepCCW = Math.idiv(-(hDistCCW * 100), steps);
+        let hStep: number;
+        if (direction === HueInterpolationDirection.Clockwise) {
+            hStep = hStepCW;
+        } else if (direction === HueInterpolationDirection.CounterClockwise) {
+            hStep = hStepCCW;
+        } else {
+            hStep = hDistCW < hDistCCW ? hStepCW : hStepCCW;
+        }
+        const h1_100 = h1 * 100; //we multiply by 100 so we keep more accurate results while doing interpolation
 
-    /*run command*/
-    let CONNECT_WIFI = 0x02
-    let CONNECT_MQTT = 0x05
-    let SUB_TOPIC0 = 0x06
-    let SUB_TOPIC1 = 0x07
-    let SUB_TOPIC2 = 0x08
-    let SUB_TOPIC3 = 0x09
-    let SUB_TOPIC4 = 0x0A
-    let PUB_TOPIC0 = 0x0B
-    let PUB_TOPIC1 = 0x0C
-    let PUB_TOPIC2 = 0x0D
-    let PUB_TOPIC3 = 0x0E
-    let PUB_TOPIC4 = 0x0F
-    let GET_URL = 0x10
-    let POST_URL = 0x11
+        //sat
+        const s1 = saturation;
+        const s2 = saturation;
+        const sDist = s2 - s1;
+        const sStep = Math.idiv(sDist, steps);
+        const s1_100 = s1 * 100;
 
+        //lum
+        const l1 = luminance;
+        const l2 = luminance;
+        const lDist = l2 - l1;
+        const lStep = Math.idiv(lDist, steps);
+        const l1_100 = l1 * 100
 
-    /*read para value*/
-    let READ_PING = 0x01
-    let READ_WIFISTATUS = 0x02
-    let READ_IP = 0x03
-    let READ_MQTTSTATUS = 0x04
-    let READ_SUBSTATUS = 0x05
-    let READ_TOPICDATA = 0x06
-    let HTTP_REQUEST = 0x10
-    let READ_VERSION = 0x12
+        //interpolate
+        if (steps === 1) {
+            writeBuff(0, hsl(h1 + hStep, s1 + sStep, l1 + lStep))
+        } else {
+            writeBuff(0, hsl(startHue, saturation, luminance));
+            for (let i = 1; i < steps - 1; i++) {
+                const h = Math.idiv((h1_100 + i * hStep), 100) + 360;
+                const s = Math.idiv((s1_100 + i * sStep), 100);
+                const l = Math.idiv((l1_100 + i * lStep), 100);
+                writeBuff(0 + i, hsl(h, s, l));
+            }
+            writeBuff(3, hsl(endHue, saturation, luminance));
+        }
+        ws2812b.sendBuffer(neopixel_buf, DigitalPin.P15)
+    }
 
-    /*para status */
-    let PING_OK = 0x01
-    let WIFI_DISCONNECT = 0x00
-    let WIFI_CONNECTING = 0x02
-    let WIFI_CONNECTED = 0x03
-    let MQTT_CONNECTED = 0x01
-    let MQTT_CONNECTERR = 0x02
-    let SUB_TOPIC_OK = 0x01
-    let SUB_TOPIC_Ceiling = 0x02
-   
+    export enum HueInterpolationDirection {
+        Clockwise,
+        CounterClockwise,
+        Shortest
+    }
 
-    let microIoTStatus = ""
-    let WIFI_NAME = ""
-    let WIFI_PASSWORLD = ""
-    let MQTT_SERVER = ""
-    let MQTT_PORT = ""
-    let MQTT_ID = ""
-    let MQTT_PASSWORLD = ""
-    let Topic_0 = ""
-    let Topic_1 = ""
-    let Topic_2 = ""
-    let Topic_3 = ""
-    let Topic_4 = ""
-    let RECDATA = ""
-    let HTTP_IP = ""
-    let HTTP_PORT = ""
-    let microIoT_IP = "0.0.0.0"
-    let G_city = 0;
+    function writeBuff(index: number, rgb: number) {
+        let r = (rgb >> 16) * (_brightness / 255);
+        let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
+        let b = ((rgb) & 0xFF) * (_brightness / 255);
+        neopixel_buf[index * 3 + 0] = Math.round(g)
+        neopixel_buf[index * 3 + 1] = Math.round(r)
+        neopixel_buf[index * 3 + 2] = Math.round(b)
+    }
+
+     function hsl(h: number, s: number, l: number): number {
+        h = Math.round(h);
+        s = Math.round(s);
+        l = Math.round(l);
+
+        h = h % 360;
+        s = Math.clamp(0, 99, s);
+        l = Math.clamp(0, 99, l);
+        let c = Math.idiv((((100 - Math.abs(2 * l - 100)) * s) << 8), 10000); //chroma, [0,255]
+        let h1 = Math.idiv(h, 60);//[0,6]
+        let h2 = Math.idiv((h - h1 * 60) * 256, 60);//[0,255]
+        let temp = Math.abs((((h1 % 2) << 8) + h2) - 256);
+        let x = (c * (256 - (temp))) >> 8;//[0,255], second largest component of this color
+        let r$: number;
+        let g$: number;
+        let b$: number;
+        if (h1 == 0) {
+            r$ = c; g$ = x; b$ = 0;
+        } else if (h1 == 1) {
+            r$ = x; g$ = c; b$ = 0;
+        } else if (h1 == 2) {
+            r$ = 0; g$ = c; b$ = x;
+        } else if (h1 == 3) {
+            r$ = 0; g$ = x; b$ = c;
+        } else if (h1 == 4) {
+            r$ = x; g$ = 0; b$ = c;
+        } else if (h1 == 5) {
+            r$ = c; g$ = 0; b$ = x;
+        }
+        let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
+        let r = r$ + m;
+        let g = g$ + m;
+        let b = b$ + m;
+
+        return (r << 16) + (g << 8) + b;
+    }
 
     export enum SERVERS {
         //% blockId=SERVERS_China block="EasyIOT_CN"
@@ -462,6 +691,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
         pins.i2cWriteBuffer(IIC_ADDRESS, buf);
 
     }
+
     function microIoT_CheckStatus(cmd: string): void {
         while (true) {
             if (microIoTStatus == cmd) {
@@ -480,7 +710,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
     //% weight=80
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure |name: %SSID| password：%PASSWORD"
+    //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure name: %SSID| password：%PASSWORD"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
         microIoT_setPara(SETWIFI_NAME, SSID)
         microIoT_setPara(SETWIFI_PASSWORLD, PASSWORD)
@@ -503,7 +733,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     //% group="IOT"
     //% blockExternalInputs=1
     //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
-    export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
+    export function microIoT_MQTT(
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,IP: string, servers: SERVERS):
         void {
@@ -550,7 +780,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
     //% weight=77
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %string| to |%TOPIC"
+    //% blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %Mess| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
 
@@ -599,13 +829,15 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
                 break;
         }
     }
+
     /**
      * MQTT processes the subscription when receiving message
      */
+
     //% weight=76
     //% blockGap=60
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top |received"
+    //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top received"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
     export function microIoT_MQTT_Event(top: TOPIC, cb: (message: string) => void) {
         microIoT_callback(top, () => {
@@ -621,6 +853,7 @@ const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
     * @param EVENT to EVENT ,eg: "yourEvent"
     * @param KEY to KEY ,eg: "yourKey"
     */
+    
     //% weight=75
     //% group="IOT"
     //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
