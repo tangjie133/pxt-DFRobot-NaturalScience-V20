@@ -17,11 +17,11 @@ const microIoT_WEBHOOKS_URL = "maker.ifttt.com"
 const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
 enum BME{
-    //%block="Temperature(°C)"
+    //%block="temperature(°C)"
     TEMP = 1,
-    //%block="Humidity(%)"
+    //%block="humidity(%)"
     HUM = 2,
-    //%block="Pressure(kPa)"
+    //%block="pressure(kPa)"
     PRESSURE = 3
 }
 
@@ -130,7 +130,7 @@ namespace naturalScience {
      */
     //%weight=110
     //% group="Sensor"
-    //%blockId=naturalScience_requstdata block="Requst data"
+    //%blockId=naturalScience_requstdata block="requst data"
     export function requstdata():void{
         pins.i2cWriteNumber(0x10, 8, NumberFormat.Int8LE);
         let _data= pins.i2cReadBuffer(0x10, 22)
@@ -145,7 +145,7 @@ namespace naturalScience {
      */
     //%weight=100
     //% group="Sensor"
-    //%blockId=naturalScience_ultraviolet block="Ultraviolet"
+    //%blockId=naturalScience_ultraviolet block="ultraviolet"
     export function getUltraviolet():string{
         return  data[0] + '.' + data[1];
     }
@@ -154,7 +154,7 @@ namespace naturalScience {
      */
     //%weight=99
     //% group="Sensor"
-    //%blockId=naturalScience_light block="Light level"
+    //%blockId=naturalScience_light block="light level"
     export function getLight():number{
       return (data[2]<<8)|data[3];
     }
@@ -163,7 +163,7 @@ namespace naturalScience {
      */
     //%weight=98
     //% group="Sensor"
-    //%blockId=naturalScience_sound block="Sound level"
+    //%blockId=naturalScience_sound block="sound level"
     export function getSound():number{
         return (data[4]<<8)|data[5];
     }
@@ -172,7 +172,7 @@ namespace naturalScience {
      */
     //%weight=97
     //% group="Sensor"
-    //%blockId=naturalScience_watertemp block="Water Temperature(°C)"
+    //%blockId=naturalScience_watertemp block="water temperature(°C)"
     export function getWatertemp():string{
         return data[6] + '.' + data[7];
     }
@@ -216,7 +216,7 @@ namespace naturalScience {
 
     //%weight=80
     //% group="Sensor"
-    //%blockId=naturalScience_SetTDSK block="Set TDS K value|%value"
+    //%blockId=naturalScience_SetTDSK block="set TDS K value|%value"
     export function setTDSK(value:number):void{
         let position:number=value.toString().indexOf(".");
         let _value = value*100;
@@ -227,11 +227,11 @@ namespace naturalScience {
         pins.i2cWriteBuffer(0x10, buffer);
     }
     /**
-     * 通过下拉框获取相应数据
+     * 通过下拉框获取对应数据
      */
     //%weight=93
     //% group="Sensor"
-    //%blockId=naturalScience_TVOC block="%value value"
+    //%blockId=naturalScience_TVOC block="%value"
     export function getTVOC(mode:CT):number{
         if(mode==1){
             return (data[18]<<8)|data[19];
@@ -247,7 +247,7 @@ namespace naturalScience {
      */
     //%weight=81
     //% group="Sensor"
-    //%blockId=naturalScience_setBaseline block="Set TVOC and CO2 baseline|%value value"
+    //%blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
     export function setBaseline(value:number):void{
         let buffer:Buffer = pins.createBuffer(3);
         buffer[0]=0x20;
@@ -269,7 +269,7 @@ namespace naturalScience {
     //% scolumn.min=1 scolumn.max=16
     //% sleng.min=1 sleng.max=16
     //% inlineInputMode=inline                 
-    //%blockId=naturalScience_OLEDString block="OLED from column |%scolumn to |%leng in row |%srow display string |%String"
+    //%blockId=naturalScience_OLEDString block="OLED from column |%scolumn to |%sleng in row |%srow display string |%String"
     export function setOLEDShowString(scolumn:number,sleng:number, srow:number, String:string):void{
         if(String.length<17){
             if(String.length<(sleng-scolumn)+1){
@@ -326,7 +326,7 @@ namespace naturalScience {
     //% ncolumn.min=1 ncolumn.max=16
     //% nleng.min=1 nleng.max=16
     //% inlineInputMode=inline
-    //%blockId=naturalScience_OLEDNumber block="OLED from column |%scolumn to |%leng in row |%srow display number|%Number"
+    //%blockId=naturalScience_OLEDNumber block="OLED from column |%ncolumn to |%nleng in row |%nrow display number|%Number"
     export function setOLEDShowNumber(ncolumn:number,nleng:number, nrow:number, Number:number):void{
         setOLEDShowString(nrow, ncolumn, nleng, Number.toString());
     }
@@ -343,7 +343,7 @@ namespace naturalScience {
     //% valuerow.min=1 valuerow.max=8
     //% valuecolumnstart.min=1 valuecolumnstart.max=16
     //% valuecolumnstop.min=1 valuecolumnstop.max=16
-    //%blockId=naturalScience_clearOLED block="Clear OLED from column|%valuecolumnstart to |%valuecolumnstop in row |%valuerow "
+    //%blockId=naturalScience_clearOLED block="clear OLED from column|%valuecolumnstart to |%valuecolumnstop in row |%valuerow "
     export function clearOLED(valuecolumnstart:number, valuecolumnstop:number, valuerow:number):void{
         let datalength:number = (valuecolumnstop - valuecolumnstart) + 1
         if (datalength < 0)
@@ -365,7 +365,7 @@ namespace naturalScience {
     //%weight=88
     //% group="OLED"
     //% valuerow.min=1 valuerow.max=8
-    //%blockId=naturalScience_clearOLEDRow block="Clear OLED row|%valuerow"
+    //%blockId=naturalScience_clearOLEDRow block="clear OLED row|%valuerow"
     export function clearOLEDRow(valuerow:number):void{
         let buffer:Buffer = pins.createBuffer(19);
         buffer[0]=0x28
@@ -383,7 +383,7 @@ namespace naturalScience {
     //%weight=89
     //% group="Motor"
     //% _speed.min=0 _speed.max=255
-    //%blockId=naturalScience_mototRun block="Motor direction|%_direction speed|%_speed control"
+    //%blockId=naturalScience_mototRun block="control motor direction|%_direction speed|%_speed"
     export function mototRun(_direction: DIR, _speed: number): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -397,7 +397,7 @@ namespace naturalScience {
      */
     //%weight=88
     //% group="Motor"
-    //%blockId=naturalScience_mototStop block="Motor stop"
+    //%blockId=naturalScience_mototStop block="motor stop"
     export function mototStop(): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -427,7 +427,7 @@ namespace naturalScience {
     //% from.min=0 from.max3
     //% to.min=0 to.max=3
     //% to.defl=3
-    //%  block="RGB LEDs |%from to|%to"
+    //%  block="range from |%from with|%to leds"
     export function microIoT_ledRange(from: number, to: number): number {
         return (from << 16) + (2 << 8) + (to);
     }
@@ -438,7 +438,7 @@ namespace naturalScience {
     //% group="RGB"
     //% index.min=0 index.max=3
     //% rgb.shadow="colorNumberPicker"
-    //%  block="RGB LED |%index show color|%rgb"
+    //%  block="RGB light |%index show color|%rgb"
     export function microIoT_setIndexColor(index: number, rgb: number) {
         let f = index;
         let t = index;
@@ -498,7 +498,7 @@ namespace naturalScience {
      * Turn off all RGB LEDs
      */
     //% weight=60
-    //%  block="clear all LEDs"
+    //%  block="clear all RGB"
     export function microIoT_ledBlank() {
         microIoT_showColor(0)
     }
@@ -508,7 +508,7 @@ namespace naturalScience {
     //% endHue.defl=360
     //% startHue.min=0 startHue.max=360
     //% endHue.min=0 endHue.max=360
-    //% blockId=led_rainbow block="Set LED show rainbow color from|%startHue to|%endHue"
+    //% blockId=led_rainbow block="set RGB show rainbow color from|%startHue to|%endHue"
     export function ledRainbow(startHue: number, endHue: number) {
         startHue = startHue >> 0;
         endHue = endHue >> 0;
@@ -732,7 +732,7 @@ namespace naturalScience {
     //% weight=79
     //% group="IOT"
     //% blockExternalInputs=1
-    //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD|(default topic_0) Topic: %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
+    //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
     export function microIoT_MQTT(
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,IP: string, servers: SERVERS):
@@ -859,7 +859,7 @@ namespace naturalScience {
     //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
     //% send.fieldEditor="gridpicker" send.fieldOptions.columns=3
     //% blockId=naturalScience_microIoT_http_IFTTT
-    //% block="IFTTT configure|event: %EVENT|key: %KEY|"
+    //% block="IFTTT configure|event: %EVENT|key: %KEY"
     export function microIoT_http_IFTTT(EVENT: string, KEY: string): void {
         microIoT_WEBHOOKS_EVENT = EVENT
         microIoT_WEBHOOKS_KEY = KEY
@@ -897,7 +897,7 @@ namespace naturalScience {
     //% weight=73
     //% group="IOT"
     //% blockId=naturalScience_microIoT_http_TK_GET
-    //% block="ThingSpeak(Get) | key %KEY|value1 %field1| value2 %field2| value3 %field3|  value4 %field4| value5 %field5| value6 %field6| value7 %field7| timeout(ms) %time"
+    //% block="ThingSpeak(Get) |key:%KEY|value1:%field1|value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7|timeout(ms):%time"
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
         let tempStr = ""
@@ -914,7 +914,7 @@ namespace naturalScience {
     //% weight=74
     //% group="IOT"
     //% blockId=naturalScience_microIoT_http_post
-    //% block="IFTTT(post) | value1 %value1| value2 %value2| value3 %value3| timeout(ms) %time"
+    //% block="IFTTT(post)|value1:%value1|value2:%value2|value3:%value3|timeout(ms):%time"
     //% inlineInputMode=inline
     export function microIoT_http_post(value1: string, value2: string, value3: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, microIoT_WEBHOOKS_URL)
