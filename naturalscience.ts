@@ -17,30 +17,30 @@ const microIoT_WEBHOOKS_URL = "maker.ifttt.com"
 const OBLOQ_MQTT_EASY_IOT_SERVER_TK = "api.thingspeak.com"
 
 enum BME{
-    //%block="temperature(°C)"
+    //% block="temperature(°C)"
     TEMP = 1,
-    //%block="humidity(%)"
+    //% block="humidity(%)"
     HUM = 2,
-    //%block="pressure(kPa)"
+    //% block="pressure(kPa)"
     PRESSURE = 3
 }
 
 enum CT{
-    //%block="CO2"
+    //% block="CO2"
     CO2=1,
-    //%block="TVOC"
+    //% block="TVOC"
     TVOC=2
 }
 
 enum DIR {
-    //%block="CW"
+    //% block="CW"
     CW = 1,
-    //%block="CCW"
+    //% block="CCW"
     CCW = 2
 }
 
-//%weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
-//%groups="[ 'Sensor', 'OLED', 'Motor', 'RGB', 'IOT']"
+//% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
+//% groups="['Sensor', 'OLED', 'Motor', 'RGB', 'IOT']"
 namespace naturalScience {
     let data:number[]=[];
     let _brightness = 255
@@ -128,9 +128,9 @@ namespace naturalScience {
     /**
      * 请求数据
      */
-    //%weight=110
-    //%group="Sensor"
-    //%blockId=naturalScience_requstdata block="requst data"
+    //% weight=110
+    //% group="Sensor"
+    //% blockId=naturalScience_requstdata block="requst data"
     export function requstdata():void{
         pins.i2cWriteNumber(0x10, 8, NumberFormat.Int8LE);
         let _data= pins.i2cReadBuffer(0x10, 22)
@@ -143,36 +143,36 @@ namespace naturalScience {
     /**
      * 读取紫外线强度
      */
-    //%weight=100
-    //%group="Sensor"
-    //%blockId=naturalScience_ultraviolet block="ultraviolet"
+    //% weight=100
+    //% group="Sensor"
+    //% blockId=naturalScience_ultraviolet block="ultraviolet"
     export function getUltraviolet():string{
         return  data[0] + '.' + data[1];
     }
     /**
      * 获取自然光线值
      */
-    //%weight=99
-    //%group="Sensor"
-    //%blockId=naturalScience_light block="light level"
+    //% weight=99
+    //% group="Sensor"
+    //% blockId=naturalScience_light block="light level"
     export function getLight():number{
       return (data[2]<<8)|data[3];
     }
     /**
      * 获取声音强度
      */
-    //%weight=98
-    //%group="Sensor"
-    //%blockId=naturalScience_sound block="sound level"
+    //% weight=98
+    //% group="Sensor"
+    //% blockId=naturalScience_sound block="sound level"
     export function getSound():number{
         return (data[4]<<8)|data[5];
     }
     /**
      * 获取水温
      */
-    //%weight=97
-    //%group="Sensor"
-    //%blockId=naturalScience_watertemp block="water temperature(°C)"
+    //% weight=97
+    //% group="Sensor"
+    //% blockId=naturalScience_watertemp block="water temperature(°C)"
     export function getWatertemp():string{
         return data[6] + '.' + data[7];
     }
@@ -180,9 +180,9 @@ namespace naturalScience {
     /**
      * 通过下拉框选择获取相应数据
      */
-    //%weight=96
-    //%group="Sensor"
-    //%blockId=naturalScience_BME block="%mode"
+    //% weight=96
+    //% group="Sensor"
+    //% blockId=naturalScience_BME block="%mode"
     export function getBME(mode:BME):string{
         if(mode==1){
             if(data[8]==1){
@@ -202,9 +202,9 @@ namespace naturalScience {
     /**
      * 获取TDS值
      */
-    //%weight=95
-    //%group="Sensor"
-    //%blockId=naturalScience_TDS block="TDS"
+    //% weight=95
+    //% group="Sensor"
+    //% blockId=naturalScience_TDS block="TDS"
     export function getTDS():number{
         return (data[16]<<8)|data[17]
     }
@@ -214,9 +214,9 @@ namespace naturalScience {
      * @param value  , eg: 1.1
      */
 
-    //%weight=80
-    //%group="Sensor"
-    //%blockId=naturalScience_SetTDSK block="set TDS K value|%value"
+    //% weight=80
+    //% group="Sensor"
+    //% blockId=naturalScience_SetTDSK block="set TDS K value|%value"
     export function setTDSK(value:number):void{
         let position:number=value.toString().indexOf(".");
         let _value = value*100;
@@ -229,9 +229,9 @@ namespace naturalScience {
     /**
      * 通过下拉框获取对应数据
      */
-    //%weight=93
-    //%group="Sensor"
-    //%blockId=naturalScience_TVOC block="%value"
+    //% weight=93
+    //% group="Sensor"
+    //% blockId=naturalScience_TVOC block="%value"
     export function getTVOC(mode:CT):number{
         if(mode==1){
             return (data[18]<<8)|data[19];
@@ -245,9 +245,9 @@ namespace naturalScience {
      * 设置TVOC和CO2基准线(基准线值请填写十进制值)
      * @param value  , eg: 33915
      */
-    //%weight=81
-    //%group="Sensor"
-    //%blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
+    //% weight=81
+    //% group="Sensor"
+    //% blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
     export function setBaseline(value:number):void{
         let buffer:Buffer = pins.createBuffer(3);
         buffer[0]=0x20;
@@ -262,14 +262,14 @@ namespace naturalScience {
      * @param scolumn  , eg: 1
      * @param sleng  , eg: 16
      */
-    //%weight=91
-    //%group="OLED"
-    //%String.defl="Hi DFRobot"
-    //%srow.min=1 srow.max=8
-    //%scolumn.min=1 scolumn.max=16
-    //%sleng.min=1 sleng.max=16
-    //%inlineInputMode=inline                 
-    //%blockId=naturalScience_OLEDString block="OLED from column |%scolumn to |%sleng in row |%srow display string |%String"
+    //% weight=91
+    //% group="OLED"
+    //% String.defl="Hi DFRobot"
+    //% srow.min=1 srow.max=8
+    //% scolumn.min=1 scolumn.max=16
+    //% sleng.min=1 sleng.max=16
+    //% inlineInputMode=inline                 
+    //% blockId=naturalScience_OLEDString block="OLED from column |%scolumn to |%sleng in row |%srow display string |%String"
     export function setOLEDShowString(scolumn:number,sleng:number, srow:number, String:string):void{
         if(String.length<17){
             if(String.length<(sleng-scolumn)+1){
@@ -319,14 +319,14 @@ namespace naturalScience {
      * @param nleng  , eg: 16
      * @param Number  , eg: 2020
      */
-    //%weight=90
-    //%group="OLED"
-    //%value.defl="DFRobot"
-    //%nrow.min=1 nrow.max=8
-    //%ncolumn.min=1 ncolumn.max=16
-    //%nleng.min=1 nleng.max=16
-    //%inlineInputMode=inline
-    //%blockId=naturalScience_OLEDNumber block="OLED from column |%ncolumn to |%nleng in row |%nrow display number|%Number"
+    //% weight=90
+    //% group="OLED"
+    //% value.defl="DFRobot"
+    //% nrow.min=1 nrow.max=8
+    //% ncolumn.min=1 ncolumn.max=16
+    //% nleng.min=1 nleng.max=16
+    //% inlineInputMode=inline
+    //% blockId=naturalScience_OLEDNumber block="OLED from column |%ncolumn to |%nleng in row |%nrow display number|%Number"
     export function setOLEDShowNumber(ncolumn:number,nleng:number, nrow:number, Number:number):void{
         setOLEDShowString(nrow, ncolumn, nleng, Number.toString());
     }
@@ -338,12 +338,12 @@ namespace naturalScience {
      * @param valuecolumnstart  , eg: 1
      * @param valuecolumnstop  , eg: 16
      */
-    //%weight=89
-    //%group="OLED"
-    //%valuerow.min=1 valuerow.max=8
-    //%valuecolumnstart.min=1 valuecolumnstart.max=16
-    //%valuecolumnstop.min=1 valuecolumnstop.max=16
-    //%blockId=naturalScience_clearOLED block="clear OLED from column|%valuecolumnstart to |%valuecolumnstop in row |%valuerow "
+    //% weight=89
+    //% group="OLED"
+    //% valuerow.min=1 valuerow.max=8
+    //% valuecolumnstart.min=1 valuecolumnstart.max=16
+    //% valuecolumnstop.min=1 valuecolumnstop.max=16
+    //% blockId=naturalScience_clearOLED block="clear OLED from column|%valuecolumnstart to |%valuecolumnstop in row |%valuerow "
     export function clearOLED(valuecolumnstart:number, valuecolumnstop:number, valuerow:number):void{
         let datalength:number = (valuecolumnstop - valuecolumnstart) + 1
         if (datalength < 0)
@@ -362,10 +362,10 @@ namespace naturalScience {
      * 清除OLED屏整行的字符串或数字
      * @param valuerow (16 pixels per line), eg: 1
      */
-    //%weight=88
-    //%group="OLED"
-    //%valuerow.min=1 valuerow.max=8
-    //%blockId=naturalScience_clearOLEDRow block="clear OLED row|%valuerow"
+    //% weight=88
+    //% group="OLED"
+    //% valuerow.min=1 valuerow.max=8
+    //% blockId=naturalScience_clearOLEDRow block="clear OLED row|%valuerow"
     export function clearOLEDRow(valuerow:number):void{
         let buffer:Buffer = pins.createBuffer(19);
         buffer[0]=0x28
@@ -380,10 +380,10 @@ namespace naturalScience {
     /**
      * 控制电机的方向和速度
      */
-    //%weight=89
-    //%group="Motor"
-    //%_speed.min=0 _speed.max=255
-    //%blockId=naturalScience_mototRun block="control motor direction|%_direction speed|%_speed"
+    //% weight=89
+    //% group="Motor"
+    //% _speed.min=0 _speed.max=255
+    //% blockId=naturalScience_mototRun block="control motor direction|%_direction speed|%_speed"
     export function mototRun(_direction: DIR, _speed: number): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -395,9 +395,9 @@ namespace naturalScience {
     /**
      * 控住电机停止运行
      */
-    //%weight=88
-    //%group="Motor"
-    //%blockId=naturalScience_mototStop block="motor stop"
+    //% weight=88
+    //% group="Motor"
+    //% blockId=naturalScience_mototStop block="motor stop"
     export function mototStop(): void {
             let buf = pins.createBuffer(3)
             buf[0] = 0x00;
@@ -409,12 +409,12 @@ namespace naturalScience {
     /** 
      * Set the three primary color:red, green, and blue
      */
-    //%weight=60
-    //%group="RGB"
-    //%r.min=0 r.max=255
-    //%g.min=0 g.max=255
-    //%b.min=0 b.max=255
-    //%block="red|%r green|%g blue|%b"
+    //% weight=60
+    //% group="RGB"
+    //% r.min=0 r.max=255
+    //% g.min=0 g.max=255
+    //% b.min=0 b.max=255
+    //% block="red|%r green|%g blue|%b"
     export function microIoT_rgb(r: number, g: number, b: number): number {
         return (r << 16) + (g << 8) + (b);
     }
@@ -422,23 +422,23 @@ namespace naturalScience {
     /**
      * RGB LEDs light up from A to B 
      */
-    //%weight=60
-    //%group="RGB"
-    //%from.min=0 from.max3
-    //%to.min=0 to.max=3
-    //%to.defl=3
-    //%block="range from |%from with|%to leds"
+    //% weight=60
+    //% group="RGB"
+    //% from.min=0 from.max3
+    //% to.min=0 to.max=3
+    //% to.defl=3
+    //% block="range from |%from with|%to leds"
     export function microIoT_ledRange(from: number, to: number): number {
         return (from << 16) + (2 << 8) + (to);
     }
    /**
     * Set the color of the specified LEDs
     */
-    //%weight=60
-    //%group="RGB"
-    //%index.min=0 index.max=3
-    //%rgb.shadow="colorNumberPicker"
-    //%block="RGB light |%index show color|%rgb"
+    //% weight=60
+    //% group="RGB"
+    //% index.min=0 index.max=3
+    //% rgb.shadow="colorNumberPicker"
+    //% block="RGB light |%index show color|%rgb"
     export function microIoT_setIndexColor(index: number, rgb: number) {
         let f = index;
         let t = index;
@@ -466,10 +466,10 @@ namespace naturalScience {
     /**
      * Set the color of all RGB LEDs
      */
-    //%weight=60
-    //%group="RGB"
-    //%rgb.shadow="colorNumberPicker"
-    //%block="show color |%rgb"
+    //% weight=60
+    //% group="RGB"
+    //% rgb.shadow="colorNumberPicker"
+    //% block="show color |%rgb"
     export function microIoT_showColor(rgb: number) {
         let r = (rgb >> 16) * (_brightness / 255);
         let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
@@ -487,29 +487,29 @@ namespace naturalScience {
     /**
      * Set the brightness of RGB LED
      */
-    //%weight=60
-    //%group="RGB"
-    //%brightness.min=0 brightness.max=255
-    //%block="set brightness to |%brightness"
+    //% weight=60
+    //% group="RGB"
+    //% brightness.min=0 brightness.max=255
+    //% block="set brightness to |%brightness"
     export function microIoT_setBrightness(brightness: number) {
         _brightness = brightness;
     }
     /**
      * Turn off all RGB LEDs
      */
-    //%weight=60
-    //%group="RGB"
-    //%block="clear all RGB"
+    //% weight=40
+    //% group="RGB"
+    //% block="clear all RGB"
     export function microIoT_ledBlank() {
         microIoT_showColor(0)
     }
-    //%weight=50
-    //%group="RGB"
-    //%startHue.defl=1
-    //%endHue.defl=360
-    //%startHue.min=0 startHue.max=360
-    //%endHue.min=0 endHue.max=360
-    //%blockId=led_rainbow block="set RGB show rainbow color from|%startHue to|%endHue"
+    //% weight=50
+    //% group="RGB"
+    //% startHue.defl=1
+    //% endHue.defl=360
+    //% startHue.min=0 startHue.max=360
+    //% endHue.min=0 endHue.max=360
+    //% blockId=led_rainbow block="set RGB show rainbow color from|%startHue to|%endHue"
     export function ledRainbow(startHue: number, endHue: number) {
         startHue = startHue >> 0;
         endHue = endHue >> 0;
@@ -618,11 +618,11 @@ namespace naturalScience {
     }
 
     export enum SERVERS {
-        //%blockId=SERVERS_China block="EasyIOT_CN"
+        //% blockId=SERVERS_China block="EasyIOT_CN"
         China,
-        //%blockId=SERVERS_English block="EasyIOT_EN"
+        //% blockId=SERVERS_English block="EasyIOT_EN"
         English,
-        //%block="SIOT"
+        //% block="SIOT"
         SIOT
     }
 
@@ -709,9 +709,9 @@ namespace naturalScience {
     * @param PASSWORD to PASSWORD ,eg: "yourPASSWORD"
     */
 
-    //%weight=80
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure name: %SSID| password：%PASSWORD"
+    //% weight=80
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure name: %SSID| password：%PASSWORD"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
         microIoT_setPara(SETWIFI_NAME, SSID)
         microIoT_setPara(SETWIFI_PASSWORLD, PASSWORD)
@@ -730,10 +730,10 @@ namespace naturalScience {
      * @param IP to IP ,eg: "192.168."
     */
 
-    //%weight=79
-    //%group="IOT"
-    //%blockExternalInputs=1
-    //%blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
+    //% weight=79
+    //% group="IOT"
+    //% blockExternalInputs=1
+    //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
     export function microIoT_MQTT(
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,IP: string, servers: SERVERS):
@@ -763,11 +763,11 @@ namespace naturalScience {
      * Add an MQTT subscription
      */
 
-    //%weight=76
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_add_topic
-    //%block="subscribe additional %top |: %IOT_TOPIC"
-    //%top.fieldEditor="gridpicker" top.fieldOptions.columns=2
+    //% weight=76
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_add_topic
+    //% block="subscribe additional %top |: %IOT_TOPIC"
+    //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
     export function microIoT_add_topic(top: TOPIC, IOT_TOPIC: string): void {
         microIoT_ParaRunCommand((top + 0x06), IOT_TOPIC);
         microIoT_CheckStatus("SubTopicOK");
@@ -779,9 +779,9 @@ namespace naturalScience {
      * @param Mess to Mess ,eg: "mess"
      */
 
-    //%weight=77
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %Mess| to |%TOPIC"
+    //% weight=77
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %Mess| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
 
@@ -835,11 +835,11 @@ namespace naturalScience {
      * MQTT processes the subscription when receiving message
      */
 
-    //%weight=76
-    //%blockGap=60
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top received"
-    //%top.fieldEditor="gridpicker" top.fieldOptions.columns=2
+    //% weight=76
+    //% blockGap=60
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top received"
+    //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
     export function microIoT_MQTT_Event(top: TOPIC, cb: (message: string) => void) {
         microIoT_callback(top, () => {
             const packet = new PacketMqtt()
@@ -855,12 +855,12 @@ namespace naturalScience {
     * @param KEY to KEY ,eg: "yourKey"
     */
     
-    //%weight=75
-    //%group="IOT"
-    //%receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
-    //%send.fieldEditor="gridpicker" send.fieldOptions.columns=3
-    //%blockId=naturalScience_microIoT_http_IFTTT
-    //%block="IFTTT configure|event: %EVENT|key: %KEY"
+    //% weight=75
+    //% group="IOT"
+    //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
+    //% send.fieldEditor="gridpicker" send.fieldOptions.columns=3
+    //% blockId=naturalScience_microIoT_http_IFTTT
+    //% block="IFTTT configure|event: %EVENT|key: %KEY"
     export function microIoT_http_IFTTT(EVENT: string, KEY: string): void {
         microIoT_WEBHOOKS_EVENT = EVENT
         microIoT_WEBHOOKS_KEY = KEY
@@ -895,10 +895,10 @@ namespace naturalScience {
     * @param time set timeout, eg: 10000
     */
 
-    //%weight=73
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_http_TK_GET
-    //%block="ThingSpeak(Get) |key:%KEY|value1:%field1|value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7|timeout(ms):%time"
+    //% weight=73
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_http_TK_GET
+    //% block="ThingSpeak(Get) |key:%KEY|value1:%field1|value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7|timeout(ms):%time"
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2: string, field3: string, field4: string, field5: string, field6: string, field7: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
         let tempStr = ""
@@ -912,11 +912,11 @@ namespace naturalScience {
      * @param time set timeout, eg: 10000
     */
 
-    //%weight=74
-    //%group="IOT"
-    //%blockId=naturalScience_microIoT_http_post
-    //%block="IFTTT(post)|value1:%value1|value2:%value2|value3:%value3|timeout(ms):%time"
-    //%inlineInputMode=inline
+    //% weight=74
+    //% group="IOT"
+    //% blockId=naturalScience_microIoT_http_post
+    //% block="IFTTT(post)|value1:%value1|value2:%value2|value3:%value3|timeout(ms):%time"
+    //% inlineInputMode=inline
     export function microIoT_http_post(value1: string, value2: string, value3: string, time: number): void {
         microIoT_setPara(SETHTTP_IP, microIoT_WEBHOOKS_URL)
         let tempStr = ""
