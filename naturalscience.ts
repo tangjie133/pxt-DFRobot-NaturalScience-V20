@@ -40,7 +40,7 @@ enum DIR {
 }
 
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
-//% groups="[ 'Sensor', 'OLED', 'IOT', 'Motor', 'RGB']"
+//% groups="[ 'Sensor', 'OLED', 'Motor', 'RGB', 'IOT']"
 namespace naturalScience {
     let data:number[]=[];
     let _brightness = 255
