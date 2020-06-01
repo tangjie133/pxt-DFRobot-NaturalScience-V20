@@ -498,6 +498,7 @@ namespace naturalScience {
      * Turn off all RGB LEDs
      */
     //% weight=60
+    //% group="RGB"
     //%  block="clear all RGB"
     export function microIoT_ledBlank() {
         microIoT_showColor(0)
