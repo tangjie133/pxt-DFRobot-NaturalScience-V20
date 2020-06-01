@@ -344,7 +344,7 @@ namespace naturalScience {
     //% inlineInputMode=inline
     //% blockId=naturalScience_OLEDNumber block="OLED from column |%ncolumn to |%nleng in row |%nrow display number|%Number"
     export function setOLEDShowNumber(ncolumn:number,nleng:number, nrow:number, Number:number):void{
-        setOLEDShowString(nrow, ncolumn, nleng, Number.toString());
+        setOLEDShowString(ncolumn, nleng, nrow, Number.toString());
     }
 
     
