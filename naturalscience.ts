@@ -125,9 +125,11 @@ namespace naturalScience {
     let HTTP_PORT = ""
     let microIoT_IP = "0.0.0.0"
     let G_city = 0;
+
     /**
      * 请求数据
      */
+
     //% weight=110
     //% group="Sensor"
     //% blockId=naturalScience_requstdata block="requst data"
@@ -143,33 +145,40 @@ namespace naturalScience {
     /**
      * 读取紫外线强度
      */
+
     //% weight=100
     //% group="Sensor"
     //% blockId=naturalScience_ultraviolet block="ultraviolet"
     export function getUltraviolet():string{
         return  data[0] + '.' + data[1];
     }
+
     /**
      * 获取自然光线值
      */
+
     //% weight=99
     //% group="Sensor"
     //% blockId=naturalScience_light block="light level"
     export function getLight():number{
       return (data[2]<<8)|data[3];
     }
+
     /**
      * 获取声音强度
      */
+
     //% weight=98
     //% group="Sensor"
     //% blockId=naturalScience_sound block="sound level"
     export function getSound():number{
         return (data[4]<<8)|data[5];
     }
+
     /**
      * 获取水温
      */
+
     //% weight=97
     //% group="Sensor"
     //% blockId=naturalScience_watertemp block="water temperature(°C)"
@@ -180,6 +189,7 @@ namespace naturalScience {
     /**
      * 通过下拉框选择获取相应数据
      */
+
     //% weight=96
     //% group="Sensor"
     //% blockId=naturalScience_BME block="%mode"
@@ -202,6 +212,7 @@ namespace naturalScience {
     /**
      * 获取TDS值
      */
+
     //% weight=95
     //% group="Sensor"
     //% blockId=naturalScience_TDS block="TDS"
@@ -226,9 +237,11 @@ namespace naturalScience {
         buffer[2]=parseInt(_value.toString().substr(position, position+1));
         pins.i2cWriteBuffer(0x10, buffer);
     }
+
     /**
      * 通过下拉框获取对应数据
      */
+
     //% weight=93
     //% group="Sensor"
     //% blockId=naturalScience_TVOC block="%value"
@@ -245,6 +258,7 @@ namespace naturalScience {
      * 设置TVOC和CO2基准线(基准线值请填写十进制值)
      * @param value  , eg: 33915
      */
+
     //% weight=81
     //% group="Sensor"
     //% blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
@@ -262,6 +276,7 @@ namespace naturalScience {
      * @param scolumn  , eg: 1
      * @param sleng  , eg: 16
      */
+
     //% weight=91
     //% group="OLED"
     //% String.defl="Hi DFRobot"
@@ -319,6 +334,7 @@ namespace naturalScience {
      * @param nleng  , eg: 16
      * @param Number  , eg: 2020
      */
+
     //% weight=90
     //% group="OLED"
     //% value.defl="DFRobot"
@@ -338,6 +354,7 @@ namespace naturalScience {
      * @param valuecolumnstart  , eg: 1
      * @param valuecolumnstop  , eg: 16
      */
+
     //% weight=89
     //% group="OLED"
     //% valuerow.min=1 valuerow.max=8
@@ -358,10 +375,12 @@ namespace naturalScience {
         pins.i2cWriteBuffer(0x10, buffer);
         basic.pause(50);
     }
+
     /**
      * 清除OLED屏整行的字符串或数字
      * @param valuerow (16 pixels per line), eg: 1
      */
+
     //% weight=88
     //% group="OLED"
     //% valuerow.min=1 valuerow.max=8
@@ -380,6 +399,7 @@ namespace naturalScience {
     /**
      * 控制电机的方向和速度
      */
+
     //% weight=89
     //% group="Motor"
     //% _speed.min=0 _speed.max=255
@@ -392,9 +412,11 @@ namespace naturalScience {
             pins.i2cWriteBuffer(0x10, buf)
 
     }
+
     /**
      * 控住电机停止运行
      */
+
     //% weight=88
     //% group="Motor"
     //% blockId=naturalScience_mototStop block="motor stop"
@@ -409,6 +431,7 @@ namespace naturalScience {
     /** 
      * Set the three primary color:red, green, and blue
      */
+
     //% weight=60
     //% group="RGB"
     //% r.min=0 r.max=255
@@ -422,6 +445,7 @@ namespace naturalScience {
     /**
      * RGB LEDs light up from A to B 
      */
+
     //% weight=60
     //% group="RGB"
     //% from.min=0 from.max3
@@ -431,9 +455,11 @@ namespace naturalScience {
     export function microIoT_ledRange(from: number, to: number): number {
         return (from << 16) + (2 << 8) + (to);
     }
+
    /**
     * Set the color of the specified LEDs
     */
+
     //% weight=60
     //% group="RGB"
     //% index.min=0 index.max=3
@@ -463,9 +489,11 @@ namespace naturalScience {
         ws2812b.sendBuffer(neopixel_buf, DigitalPin.P15)
 
     }
+
     /**
      * Set the color of all RGB LEDs
      */
+
     //% weight=60
     //% group="RGB"
     //% rgb.shadow="colorNumberPicker"
@@ -484,9 +512,11 @@ namespace naturalScience {
         }
         ws2812b.sendBuffer(neopixel_buf, DigitalPin.P15)
     }
+
     /**
      * Set the brightness of RGB LED
      */
+
     //% weight=60
     //% group="RGB"
     //% brightness.min=0 brightness.max=255
@@ -494,15 +524,22 @@ namespace naturalScience {
     export function microIoT_setBrightness(brightness: number) {
         _brightness = brightness;
     }
+
     /**
      * Turn off all RGB LEDs
      */
+
     //% weight=40
     //% group="RGB"
     //% block="clear all RGB"
     export function microIoT_ledBlank() {
         microIoT_showColor(0)
     }
+
+    /**
+     * RGB灯显示彩虹色
+     */
+    
     //% weight=50
     //% group="RGB"
     //% startHue.defl=1
