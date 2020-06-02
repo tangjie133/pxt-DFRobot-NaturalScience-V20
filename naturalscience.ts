@@ -263,10 +263,11 @@ namespace naturalScience {
     //% group="Sensor"
     //% blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
     export function setBaseline(value:number):void{
+        let _value=parseInt(value.toString(), 16);
         let buffer:Buffer = pins.createBuffer(3);
         buffer[0]=0x20;
-        buffer[1]=value>>8&0xff;
-        buffer[2]=value&0xff;
+        buffer[1]=_value>>8&0xff;
+        buffer[2]=_value&0xff;
         pins.i2cWriteBuffer(0x10, buffer);
     }
 
