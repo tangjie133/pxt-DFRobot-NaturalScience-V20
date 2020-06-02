@@ -455,7 +455,7 @@ namespace naturalScience {
     //% to.defl=3
     //% block="range from |%from with|%to leds"
     export function microIoT_ledRange(from: number, to: number): number {
-        return ((from-1) << 16) + (2 << 8) + (to-1);
+        return ((from-1) << 16) + (2 << 8) + (to);
     }
 
     /**
