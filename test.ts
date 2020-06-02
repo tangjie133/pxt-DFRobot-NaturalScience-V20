@@ -2,7 +2,7 @@ input.onButtonPressed(Button.A, function () {
     naturalScience.microIoT_SendMessage("78", naturalScience.TOPIC.topic_0)
 })
 input.onButtonPressed(Button.AB, function () {
-    naturalScience.microIoT_http_post("12", "344", "44", 10000)
+    naturalScience.microIoT_http_post("12", "344", "44")
 })
 input.onButtonPressed(Button.B, function () {
     naturalScience.microIoT_http_TK_GET(
@@ -13,8 +13,7 @@ input.onButtonPressed(Button.B, function () {
     "",
     "",
     "",
-    "",
-    10000
+    ""
     )
 })
 naturalScience.microIoT_WIFI("hitest", "12345678")
