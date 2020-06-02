@@ -432,6 +432,9 @@ namespace naturalScience {
 
     /** 
      * Set the three primary color:red, green, and blue
+     * @param r  , eg: 100
+     * @param g  , eg: 100
+     * @param b  , eg: 100
      */
 
     //% weight=60
