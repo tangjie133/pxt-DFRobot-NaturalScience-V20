@@ -445,7 +445,9 @@ namespace naturalScience {
     }
 
     /**
-     * RGB LEDs light up from A to B 
+     * RGB LEDs light up from A to B
+     * @param from  , eg: 1
+     * @param to  , eg: 4
      */
 
     //% weight=60
@@ -460,6 +462,7 @@ namespace naturalScience {
 
     /**
      * Set the color of the specified LEDs
+     * @param index  , eg: 1
      */
 
     //% weight=60
