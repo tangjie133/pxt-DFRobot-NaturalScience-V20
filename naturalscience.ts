@@ -520,6 +520,7 @@ namespace naturalScience {
 
     /**
      * Set the brightness of RGB LED
+     * @param brightness  , eg: 100
      */
 
     //% weight=70
