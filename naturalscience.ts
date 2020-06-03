@@ -256,18 +256,17 @@ namespace naturalScience {
 
     /**
      * 设置TVOC和CO2基准线(基准线值请填写十进制值)
-     * @param value  , eg: 0x847B
+     * @param value  , eg: 33915
      */
 
     //% weight=81
     //% group="Sensor"
     //% blockId=naturalScience_setBaseline block="set TVOC and CO2 baseline|%value value"
-    export function setBaseline(value: string): void {
-        let _value = parseInt(value);
+    export function setBaseline(value: number): void {
         let buffer: Buffer = pins.createBuffer(3);
         buffer[0] = 0x20;
-        buffer[1] = _value >> 8 & 0xff;
-        buffer[2] = _value & 0xff;
+        buffer[1] = value >> 8 & 0xff;
+        buffer[2] = value & 0xff;
         pins.i2cWriteBuffer(0x10, buffer);
         
     }
