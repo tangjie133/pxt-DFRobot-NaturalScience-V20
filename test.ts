@@ -22,7 +22,6 @@ naturalScience.microIoT_MQTT(
 "rHpr0RcWR",
 "9NtrAg5ZRz",
 "DN5FYlDZR",
-"192.168.",
 naturalScience.SERVERS.China
 )
 naturalScience.setTDSK(1.1)

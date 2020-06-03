@@ -775,20 +775,19 @@ namespace naturalScience {
      * @param IP to IP ,eg: "192.168."
     */
 
-    //% weight=79
-    //% group="IOT"
+    //% weight=90
     //% blockExternalInputs=1
-    //% blockId=naturalScience_microIoT_MQTT block="MQTT configure|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS"
-    export function microIoT_MQTT(
+    //% blockId=OBLOQ-I2C_MQTT block="MQTT configure|IOT_ID(user):%IOT_ID|IOT_PWD(password):%IOT_PWD|Topic(default topic_0):%IOT_TOPIC|server:%SERVERS||IP:%IP"
+    export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
         IOT_ID: string, IOT_PWD: string,
-        IOT_TOPIC: string, IP: string, servers: SERVERS):
+        IOT_TOPIC: string,servers: SERVERS, IP?: string):
         void {
         if (servers == SERVERS.China) {
             microIoT_setPara(SETMQTT_SERVER, OBLOQ_MQTT_EASY_IOT_SERVER_CHINA)
         } else if (servers == SERVERS.English) {
             microIoT_setPara(SETMQTT_SERVER, OBLOQ_MQTT_EASY_IOT_SERVER_EN)
-        }
-        else { microIoT_setPara(SETMQTT_SERVER, IP) }
+        } 
+        else{microIoT_setPara(SETMQTT_SERVER, IP)}
         microIoT_setPara(SETMQTT_PORT, "1883")//1883
         microIoT_setPara(SETMQTT_ID, IOT_ID)
         microIoT_setPara(SETMQTT_PASSWORLD, IOT_PWD)
@@ -796,7 +795,7 @@ namespace naturalScience {
         microIoT_runCommand(CONNECT_MQTT);
         microIoT_CheckStatus("MQTTConnected");
         serial.writeString("mqtt connected\r\n");
-
+      
         Topic_0 = IOT_TOPIC
         microIoT_ParaRunCommand(SUB_TOPIC0, IOT_TOPIC);
         microIoT_CheckStatus("SubTopicOK");
