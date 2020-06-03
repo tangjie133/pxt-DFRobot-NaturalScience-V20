@@ -944,7 +944,7 @@ namespace naturalScience {
     //% blockId=naturalScience_microIoT_http_TK_GET
     //% expandableArgumentMode="enabled"
     //% inlineInputMode=inline
-    //% block="ThingSpeak configure|key:%KEY send message value1:%field1||value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7" 
+    //% block="ThingSpeak configure|key:%KEY send value1:%field1||value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7" 
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2?: string, field3?: string, field4?: string, field5?: string, field6?: string, field7?: string): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
         let tempStr = ""
@@ -963,7 +963,7 @@ namespace naturalScience {
     //% weight=40
     //% group="IOT"
     //% blockId=naturalScience_microIoT_http_post
-    //% block="IFTTT send message|value1:%value1|value2:%value2|value3:%value3"
+    //% block="IFTTT send value1:%value1|value2:%value2|value3:%value3"
     //% inlineInputMode=inline
     export function microIoT_http_post(value1: string, value2: string, value3: string): void {
         microIoT_setPara(SETHTTP_IP, microIoT_WEBHOOKS_URL)
