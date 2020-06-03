@@ -17,17 +17,19 @@
     "naturalScience.clearOLEDRow|block": "清除OLED第|%valuerow 行",
     "naturalScience.mototRun|block": "控制电机方向|%_direction 速度|%_speed",
     "naturalScience.mototStop|block": "电机停止",
-    "naturalScience.microIoT_setBrightness|block": "设置亮度为|%brightness",
-    "naturalScience.microIoT_showColor|block": "显示颜色|%rgb",
+    "naturalScience.microIoT_setBrightness|block": "设置RGB亮度为|%brightness",
+    "naturalScience.microIoT_showColor|block": "RGB显示颜色|%rgb",
     "naturalScience.microIoT_setIndexColor|block": "RGB 灯|%index 显示颜色|%rgb",
     "naturalScience.microIoT_ledRange|block": "RGB范围从|%from 到|%to",
     "naturalScience.microIoT_rgb|block": "红|%r绿|%g蓝|%b",
     "naturalScience.ledRainbow|block":"设置RGB显示彩虹色从|%startHue 到|%endHue",
     "naturalScience.microIoT_ledBlank|block":"关闭全部RGB",
     "naturalScience.microIoT_WIFI|block":"WI-FI 配置 名称:|%SSID 密码:|%PASSWORD",
-    "naturalScience.microIoT_MQTT|block":"MQTT 配置|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|IP(SIOT):%IP server:%SERVERS",
+    "naturalScience.microIoT_MQTT|block":"MQTT 配置|IOT_ID(user): %IOT_ID| IOT_PWD(password) :%IOT_PWD| Topic(default topic_0): %IOT_TOPIC|server:%SERVERS||IP(SIOT):%IP",
     "naturalScience.microIoT_SendMessage|block":"MQTT 发送消息 |%Mess 到|%TOPIC",
     "naturalScience.microIoT_MQTT_Event|block":"当MQTT|%top 接收",
     "naturalScience.microIoT_add_topic|block":"新增订阅|%top |: %IOT_TOPIC",
-    "naturalScience.microIoT_http_IFTTT|block":"IFTTT 配置|事件: %EVENT|密钥: %KEY|"
+    "naturalScience.microIoT_http_IFTTT|block":"IFTTT 配置|事件: %EVENT|密钥: %KEY|",
+    "naturalScience.microIoT_http_post|block":"IFTTT发送信息：|值1:%value1|值2:%value2|值3:%value3",
+    "naturalScience.microIoT_http_TK_GET|block":"ThingSpeak 配置|key:%KEY 发送信息：值1:%field1||值2:%field2|值3:%field3|值4:%field4|值5:%field5|值6:%field6|值7:%field7"
 }

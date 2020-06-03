@@ -503,7 +503,7 @@ namespace naturalScience {
     //% weight=60
     //% group="RGB"
     //% rgb.shadow="colorNumberPicker"
-    //% block="show color |%rgb"
+    //% block=" RGB show color |%rgb"
     export function microIoT_showColor(rgb: number) {
         let r = (rgb >> 16) * (_brightness / 255);
         let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
@@ -527,7 +527,7 @@ namespace naturalScience {
     //% weight=70
     //% group="RGB"
     //% brightness.min=0 brightness.max=255
-    //% block="set brightness to |%brightness"
+    //% block="set RGB brightness to |%brightness"
     export function microIoT_setBrightness(brightness: number) {
         _brightness = brightness;
     }
@@ -753,7 +753,7 @@ namespace naturalScience {
     * @param PASSWORD to PASSWORD ,eg: "yourPASSWORD"
     */
 
-    //% weight=80
+    //% weight=100
     //% group="IOT"
     //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure name: %SSID| password：%PASSWORD"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
@@ -775,9 +775,10 @@ namespace naturalScience {
     */
 
     //% weight=90
+    //% group="IOT"
     //% blockExternalInputs=1
     //% blockId=OBLOQ-I2C_MQTT block="MQTT configure|IOT_ID(user):%IOT_ID|IOT_PWD(password):%IOT_PWD|Topic(default topic_0):%IOT_TOPIC|server:%SERVERS||IP:%IP"
-    export function microIoT_MQTT(/*SSID: string, PASSWORD: string,*/
+    export function microIoT_MQTT(
         IOT_ID: string, IOT_PWD: string,
         IOT_TOPIC: string,servers: SERVERS, IP?: string):
         void {
@@ -804,9 +805,10 @@ namespace naturalScience {
 
     /**
      * Add an MQTT subscription
+     * @param IOT_TOPIC ,eg: "yourIotTopic"
      */
 
-    //% weight=76
+    //% weight=70
     //% group="IOT"
     //% blockId=naturalScience_microIoT_add_topic
     //% block="subscribe additional %top |: %IOT_TOPIC"
@@ -822,9 +824,9 @@ namespace naturalScience {
      * @param Mess to Mess ,eg: "mess"
      */
 
-    //% weight=77
+    //% weight=80
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_SendMessage block="MQTT Send Message %Mess| to |%TOPIC"
+    //% blockId=naturalScience_microIoT_SendMessage block="MQTT send message %Mess| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
 
@@ -878,8 +880,7 @@ namespace naturalScience {
      * MQTT processes the subscription when receiving message
      */
 
-    //% weight=76
-    //% blockGap=60
+    //% weight=60
     //% group="IOT"
     //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top received"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
@@ -898,7 +899,7 @@ namespace naturalScience {
     * @param KEY to KEY ,eg: "yourKey"
     */
 
-    //% weight=75
+    //% weight=50
     //% group="IOT"
     //% receive.fieldEditor="gridpicker" receive.fieldOptions.columns=3
     //% send.fieldEditor="gridpicker" send.fieldOptions.columns=3
@@ -935,15 +936,15 @@ namespace naturalScience {
     /**
     * ThingSpeak configured and sent data
     * @param KEY to KEY ,eg: "your write api key"
-    * @param time set timeout, eg: 10000
+    * @param field1 ,eg: 2020
     */
 
-    //% weight=73
+    //% weight=30
     //% group="IOT"
     //% blockId=naturalScience_microIoT_http_TK_GET
     //% expandableArgumentMode="enabled"
     //% inlineInputMode=inline
-    //% block="ThingSpeak(Get) |key:%KEY|value1:%field1||value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7" 
+    //% block="ThingSpeak configure|key:%KEY send message value1:%field1||value2:%field2|value3:%field3|value4:%field4|value5:%field5|value6:%field6|value7:%field7" 
     export function microIoT_http_TK_GET(KEY: string, field1: string, field2?: string, field3?: string, field4?: string, field5?: string, field6?: string, field7?: string): void {
         microIoT_setPara(SETHTTP_IP, OBLOQ_MQTT_EASY_IOT_SERVER_TK)
         let tempStr = ""
@@ -954,13 +955,15 @@ namespace naturalScience {
     /**
      * IFTTT send data
      * time(ms): private long maxWait
-     * @param time set timeout, eg: 10000
+     * @param value1 ,eg: Hi
+     * @param value2 ,eg: DFRobot
+     * @param value3 ,eg: 2020
     */
 
-    //% weight=74
+    //% weight=40
     //% group="IOT"
     //% blockId=naturalScience_microIoT_http_post
-    //% block="IFTTT(post)|value1:%value1|value2:%value2|value3:%value3"
+    //% block="IFTTT send message|value1:%value1|value2:%value2|value3:%value3"
     //% inlineInputMode=inline
     export function microIoT_http_post(value1: string, value2: string, value3: string): void {
         microIoT_setPara(SETHTTP_IP, microIoT_WEBHOOKS_URL)
