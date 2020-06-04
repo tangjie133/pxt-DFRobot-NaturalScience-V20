@@ -826,7 +826,7 @@ namespace naturalScience {
 
     //% weight=80
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_SendMessage block="MQTT send message %Mess| to |%TOPIC"
+    //% blockId=naturalScience_microIoT_SendMessage block="send message %Mess| to |%TOPIC"
     export function microIoT_SendMessage(Mess: string, Topic: TOPIC): void {
         let topic = 0
 
@@ -882,7 +882,7 @@ namespace naturalScience {
 
     //% weight=60
     //% group="IOT"
-    //% blockId=naturalScience_microIoT_MQTT_Event block="MQTT on %top received"
+    //% blockId=naturalScience_microIoT_MQTT_Event block="on %top received"
     //% top.fieldEditor="gridpicker" top.fieldOptions.columns=2
     export function microIoT_MQTT_Event(top: TOPIC, cb: (message: string) => void) {
         microIoT_callback(top, () => {
