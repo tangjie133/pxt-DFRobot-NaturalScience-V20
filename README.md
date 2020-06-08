@@ -3,7 +3,7 @@
 [无](无)
 ## Basic usage
 
-* 请求传感器数据
+* Request sensor data
 
 ```blocks
 
@@ -13,7 +13,7 @@
 
 ```
 
-* 控制电机的方向、速度和停止
+* Control the speed and direction of motor, or stop the motor 
 
 ```blocks
 
@@ -25,7 +25,7 @@
     })
 
 ```
-* 控制RGB灯显示不同颜色
+* Control RGB LEDs to display various colors 
 
 ```blocks
 
@@ -40,7 +40,7 @@
     })
 
 ```
-* OLED显示模块可以用于显示传感器数据，数字和字符串都能够在屏幕上面显示
+* OLED Screen module can be used to display sensor data, number, and string. 
 
 ```blocks
 
@@ -51,7 +51,7 @@
 
 ```
 
-* 清除OLED显示屏上的数字或字符串，能够清除指定位置的字符串和数字也能清除整行数据
+* Clear number or string on the OLED sreen, clear specific number/string or clear entire row. 
 
 ```blocks
 
@@ -62,7 +62,7 @@
 
 ```
 
-* 在OLED上显示传感器数据
+* Display sensor data on the OLED sreen 
 
 ```blocks
 
@@ -82,7 +82,7 @@
 
 ```
 
-* IOT控制模块，通过配置能够访问IFTTT、Thingspeak、SIOT、EasyIOT物联网平台
+* IOT control module, access to IoT platforms like IFTTT, Thingspeak, SIOT, EasyIOT via configuration 
 
 ```blocks
 

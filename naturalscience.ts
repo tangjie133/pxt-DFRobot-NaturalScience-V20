@@ -127,7 +127,7 @@ namespace naturalScience {
     let G_city = 0;
 
     /**
-     * 请求数据
+     * Request data
      */
 
     //% weight=110
@@ -143,7 +143,7 @@ namespace naturalScience {
     }
 
     /**
-     * 读取紫外线强度
+     * Read ultraviolet radiation intensity 
      */
 
     //% weight=100
@@ -154,7 +154,7 @@ namespace naturalScience {
     }
 
     /**
-     * 获取自然光线值
+     * Get ambient light level 
      */
 
     //% weight=99
@@ -165,7 +165,7 @@ namespace naturalScience {
     }
 
     /**
-     * 获取声音强度
+     * Get sound intensity 
      */
 
     //% weight=98
@@ -176,7 +176,7 @@ namespace naturalScience {
     }
 
     /**
-     * 获取水温
+     * Get water temperature 
      */
 
     //% weight=97
@@ -187,7 +187,7 @@ namespace naturalScience {
     }
 
     /**
-     * 通过下拉框选择获取相应数据
+     * Select related data by the drop-down box 
      */
 
     //% weight=96
@@ -210,7 +210,7 @@ namespace naturalScience {
     }
 
     /**
-     * 获取TDS值
+     * Get TDS value 
      */
 
     //% weight=95
@@ -221,7 +221,7 @@ namespace naturalScience {
     }
 
     /**
-     * 通过修改K值修正TDS数据
+     * Revise K value to correct TDS data 
      * @param value  , eg: 1.1
      */
 
@@ -239,7 +239,7 @@ namespace naturalScience {
     }
 
     /**
-     * 通过下拉框获取对应数据
+     * Get related data by the drop-down box 
      */
 
     //% weight=93
@@ -255,7 +255,7 @@ namespace naturalScience {
     }
 
     /**
-     * 设置TVOC和CO2基准线(基准线值请填写十进制值)
+     * Set TVOC and CO2 baseline (Baseline should be a decimal value)
      * @param value  , eg: 33915
      */
 
@@ -272,7 +272,7 @@ namespace naturalScience {
     }
 
     /**
-     * 在OLED显示屏指定位置显示字符串
+     * Display string in specific position of OLED screen
      * @param srow (16 pixels per line), eg: 1
      * @param scolumn  , eg: 1
      * @param sleng  , eg: 16
@@ -329,7 +329,7 @@ namespace naturalScience {
     }
 
     /**
-     * 在OLED显示屏指定位置显示数字
+     * Display number in specifc position of OLED sreen 
      * @param nrow (16 pixels per line), eg: 1
      * @param ncolumn  , eg: 1
      * @param nleng  , eg: 16
@@ -350,7 +350,7 @@ namespace naturalScience {
 
 
     /**
-     * 清除OLED屏指定位置的字符串或数字
+     * Clear string or number in specific position of OLED screen 
      * @param valuerow (16 pixels per line), eg: 1
      * @param valuecolumnstart  , eg: 1
      * @param valuecolumnstop  , eg: 16
@@ -378,7 +378,7 @@ namespace naturalScience {
     }
 
     /**
-     * 清除OLED屏整行的字符串或数字
+     * Clear string or number in a whole row of OLED screen 
      * @param valuerow (16 pixels per line), eg: 1
      */
 
@@ -398,7 +398,7 @@ namespace naturalScience {
     }
 
     /**
-     * 控制电机的方向和速度
+     * Control the direction and speed of motor 
      */
 
     //% weight=89
@@ -415,7 +415,7 @@ namespace naturalScience {
     }
 
     /**
-     * 控住电机停止运行
+     * Stop the motor 
      */
 
     //% weight=88
@@ -544,7 +544,7 @@ namespace naturalScience {
     }
 
     /**
-     * RGB灯显示彩虹色
+     * RGB LEDs display rainbow colors 
      */
 
     //% weight=50
