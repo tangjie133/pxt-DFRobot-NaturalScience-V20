@@ -6,7 +6,6 @@ input.onButtonPressed(Button.AB, function () {
 })
 input.onButtonPressed(Button.B, function () {
     naturalScience.microIoT_http_TK_GET(
-    "GX8STNEAUFMWNBDG",
     "95",
     "12",
     "8",
@@ -17,6 +16,7 @@ input.onButtonPressed(Button.B, function () {
     )
 })
 naturalScience.microIoT_WIFI("hitest", "12345678")
+naturalScience.microIoT_ThingSpeak_configura("yourKey")
 naturalScience.microIoT_http_IFTTT("BBB", "dtpfTlU3Wqa8y0HRh77xXE")
 naturalScience.microIoT_MQTT(
 "rHpr0RcWR",
