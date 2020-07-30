@@ -39,6 +39,12 @@ enum DIR {
     CCW = 2
 }
 
+enum PIN {
+    P0 = 1,
+    P1 = 2,
+    P2 = 3,
+};
+
 //% weight=10 color=#e7660b icon="\uf185" block="NaturalScience"
 //% groups="['Sensor', 'OLED', 'Motor', 'RGB', 'IOT']"
 namespace naturalScience {
@@ -163,6 +169,23 @@ namespace naturalScience {
     //% blockId=naturalScience_light block="light level"
     export function getLight(): number {
         return (data[2] << 8) | data[3];
+    }
+
+    /**
+     * get soil moisture
+     */
+
+    //% weight=99
+    //% group="Sensor"
+    //% blockId=naturalScience_soil_moisture block="%pin Ping get soil moisture"
+    export function moisture(pin:PIN): number {
+        let _pin;
+         switch (pin) {
+            case PIN.P0: _pin = AnalogPin.P0; break;
+            case PIN.P1: _pin = AnalogPin.P1; break;
+            default:_pin = AnalogPin.P2;
+        }
+        return pins.analogReadPin(_pin);
     }
 
     /**
