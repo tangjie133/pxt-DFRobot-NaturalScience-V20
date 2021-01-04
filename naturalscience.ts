@@ -771,6 +771,10 @@ namespace naturalScience {
         }
     }
 
+    //% advanced=true shim=i2c::init
+    function init(): void {
+        return;
+    }
     /**
     * WiFi configuration
     * @param SSID to SSID ,eg: "yourSSID"
@@ -781,6 +785,7 @@ namespace naturalScience {
     //% group="IOT"
     //% blockId=naturalScience_microIoT_WIFI block="Wi-Fi configure name: %SSID| password：%PASSWORD start connection"
     export function microIoT_WIFI(SSID: string, PASSWORD: string): void {
+        init()
         microIoT_setPara(SETWIFI_NAME, SSID)
         microIoT_setPara(SETWIFI_PASSWORLD, PASSWORD)
         microIoT_runCommand(CONNECT_WIFI)

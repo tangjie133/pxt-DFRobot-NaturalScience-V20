@@ -10,13 +10,19 @@
         "README.md",
         "ws2812b.ts",
         "sendBuffer.asm",
-		"i2c.cpp",
+        "i2c.cpp",
         "naturalscience.ts",
-        "_locales/zh/Naturalscience-strings.json"
+        "_locales/zh/Naturalscience-strings.json",
+        "shims.d.ts",
+        "enums.d.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
+    "targetVersions": {
+        "target": "3.1.46",
+        "targetId": "microbit"
+    },
     "supportedTargets": [
         "microbit"
     ],
